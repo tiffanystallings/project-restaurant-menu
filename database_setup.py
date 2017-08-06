@@ -12,6 +12,12 @@ class Restaurant(Base):
 
 class MenuItem(Base):
 	__tablename__ = 'menu_item'
+	name = Column(Integer, primary_key = True)
+	course = Column(String(250))
+	description = Column(String(250))
+	price = Column(String(8))
+	restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
+	restaurant = relationship(Restaurant)
 
 Base = declarative_base
 engine = create_engine('sqlite:///restaurantmenu.db')
