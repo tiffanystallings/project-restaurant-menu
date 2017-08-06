@@ -7,10 +7,8 @@ from sqlalchemy import create_engine
 
 class Restaurant(Base):
 	__tablename__ = 'restaurant'
-	name = Column(
-		String(80), nullable = False)
-	id = Column(
-		Integer, primary key = True)
+	name = Column(String(80), nullable = False)
+	id = Column(Integer, primary_key = True)
 
 class MenuItem(Base):
 	__tablename__ = 'menu_item'
