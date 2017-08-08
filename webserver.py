@@ -12,15 +12,18 @@ SESSION = DBSESSION()
 class WebserverHandler(BaseHTTPRequestHandler):
 	def do_GET(self):
 		try:
-			if self.path.endswith("/restaurant"):
+			if self.path.endswith("/restaurants"):
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
 
 				restaurants = SESSION.query(Restaurant).all()
-				output = "<html><body>"
+
+				output = ""
+				output += "<html><body>"
+				output += "<h1>My Favorite Restaurants</h1>"
 				for restaurant in restaurants:
-					output += "<div class = 'restaurant'><h1>%s</h1></div>" % restaurant.name
+					output += "<div class = 'restaurant'><h2>%s</h2></div>" % restaurant.name
 				output += "</body></html>"
 
 				self.wfile.write(output)
