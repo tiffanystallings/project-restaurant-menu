@@ -1,38 +1,26 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, Restaurant, MenuItem
 
+
+ENGINE = create_engine('sqlite:///restaurantmenu.db')
+DBSESSION = sessionmaker(bind = ENGINE)
+SESSION = DBSESSION()
 
 class WebserverHandler(BaseHTTPRequestHandler):
 	def do_GET(self):
 		try:
-			if self.path.endswith("/hello"):
+			if self.path.endswith("/restaurant"):
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
 
-				output = ""
-				output += "<html><body>Hello!"
-				output += "<form method='POST' enctype='multipart/form-data'\
-					action='/hello'><h2>What would you like me to say?</h2>\
-					<input name='message' type='text'><input type='submit'\
-					value='Submit'></form>"
-				output += "</body></html>"
-
-				self.wfile.write(output)
-				print output
-				return
-
-			if self.path.endswith("/hola"):
-				self.send_response(200)
-				self.send_header('Content-type', 'text/html')
-				self.end_headers()
-
-				output = ""
-				output += "<html><body>&#161 Hola !"
-				output += "<form method='POST' enctype='multipart/form-data'\
-					action='/hello'><h2>What would you like me to say?</h2>\
-					<input name='message' type='text'><input type='submit'\
-					value='Submit'></form>"
+				restaurants = SESSION.query(Restaurant).all()
+				output = "<html><body>"
+				for restaurant in restaurants:
+					output += "<div class = 'restaurant'><h1>%s</h1></div>" % restaurant.name
 				output += "</body></html>"
 
 				self.wfile.write(output)
