@@ -22,13 +22,13 @@ class WebserverHandler(BaseHTTPRequestHandler):
 def main():
 	try:
 		port = 8080
-		server = HTTPServer(('', port), webserverHandler)
+		server = HTTPServer(('', port), WebserverHandler)
 		print ("Web server is running on port %s" % port)
 		server.serve_forever()
 
 	except KeyboardInterrupt:
 		print ("Keyboard Interrupt detected. \
-			Web server shutting down."
+			Web server shutting down.")
 		server.socket.close()
 
 
