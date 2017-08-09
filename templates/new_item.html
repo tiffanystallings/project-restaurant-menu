@@ -8,7 +8,12 @@
 	<h2>To {{restaurant.name}}
 	<form action="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}" method="post">
 	<p>Name: <input type="text" size="30" name="name"></p>
-	<p>Course: <input type="text" size="30" name="course"></p>
+	<p>Course: <select name="course">
+		<option value="Entree">Entree</option>
+		<option value="Appetizer">Appetizer</option>
+		<option value="Dessert">Dessert</option>
+		<option value="Beverage">Beverage</option>
+	</select></p>
 	<p>Price: <input type="text" size="30" name="price"></p>
 	<p>Description: </p>
 	<textarea name="description" rows="2" cols="50"></textarea>
