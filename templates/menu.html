@@ -2,12 +2,22 @@
 <html>
 <head>
 	<title>Restaurants and Menus</title>
+	<link rel="stylesheet" type="text/css" 
+		href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
 	<header>
 		<h1>{{restaurant.name}}</h1>
+		{%  with messages = get_flashed_messages() %}
+			{%  if messages %}
+				<ul class="flash">
+				{% for message in messages %}
+					<li><strong>{{ message }}</strong></li>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
 	</header>
-
 	<section>
 		{% for i in items %}
 		<div class="menu-item">
