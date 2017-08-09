@@ -62,7 +62,7 @@ class WebserverHandler(BaseHTTPRequestHandler):
 
 				slice_start = self.path.find("/restaurants/") + 13
 				rest_id = int(self.path[slice_start:-5])
-				restaurant = SESSION.query(Restaurant).filter(Restaurant.id == rest_id).one()
+				restaurant = SESSION.query(Restaurant).filter_by(id = rest_id).one()
 				print restaurant
 
 				output = ""
@@ -70,7 +70,7 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				output += "<h1>Editing %s</h1>" % restaurant.name
 				output += "<form method='POST' enctype='multipart/form-data'>"
 				output += "<h2>New Name:</h2>"
-				output += "<input name='restaurant' type='text'>"
+				output += "<input name='newname' type='text'>"
 				output += "<input type='submit' value='Rename'>"
 				output += "</form>"
 				output += "</body></html>"
@@ -85,6 +85,28 @@ class WebserverHandler(BaseHTTPRequestHandler):
 
 	def do_POST(self):
 		try:
+			if self.path.find("/restaurants/") != -1 and self.path.endswith("/edit"):
+				ctype, pdict = cgi.parse_header(
+					self.headers.getheader('content-type'))
+				if ctype == 'multipart/form-data':
+					fields = cgi.parse_multipart(self.rfile, pdict)
+				new_name = fields.get('newname')
+
+				slice_start = self.path.find("/restaurants/") + 13
+				rest_id = int(self.path[slice_start:-5])
+				restaurant = SESSION.query(Restaurant).filter_by(id = rest_id).one()
+
+				restaurant.name = new_name[0]
+				SESSION.add(restaurant)
+				SESSION.commit()
+
+				self.send_response(301)
+				self.send_header('Location', '/restaurants')
+				self.end_headers()
+
+				print("Restaurant renamed!")
+				return
+
 			if self.path.endswith('/restaurants/new'):
 				ctype, pdict = cgi.parse_header(
 					self.headers.getheader('content-type'))
@@ -97,7 +119,7 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				SESSION.commit()
 
 				self.send_response(301)
-				self.send_header('Location', '../restaurants')
+				self.send_header('Location', '/restaurants')
 				self.end_headers()
 
 				print("Restaurant added!")
