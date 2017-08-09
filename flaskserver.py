@@ -80,7 +80,13 @@ def deleteMenuItem(restaurant_id, menu_id):
 	item = session.query(MenuItem).filter_by(
 		 id=menu_id).one()
 
-	
+	if request.method == 'POST':
+		session.delete(item)
+		session.commit()
+
+		return redirect(url_for('showMenuItems',
+			restaurant_id = restaurant_id))
+		
 	return render_template('delete_item.html', item=item)
 
 if __name__ == '__main__':
