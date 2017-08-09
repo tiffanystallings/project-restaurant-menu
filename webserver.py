@@ -26,7 +26,7 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				for restaurant in restaurants:
 					output += "<div class = 'restaurant'>"
 					output += "<h2>%s</h2>" % restaurant.name
-					output += "<a href='#'>Edit</a>"
+					output += "<a href='restaurants/%s/edit'>Edit</a>" % restaurant.id
 					output += "<br>"
 					output += "<a href='#'>Delete</a>"
 					output += "</div>" 
@@ -48,6 +48,30 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				output += "<h2>Restaurant Name:</h2>"
 				output += "<input name='restaurant' type='text'>"
 				output += "<input type='submit' value='Add'>"
+				output += "</form>"
+				output += "</body></html>"
+
+				self.wfile.write(output)
+				print output
+				return
+
+			if self.path.find("/restaurants/") != -1 and self.path.endswith("/edit"):
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+
+				slice_start = self.path.find("/restaurants/") + 13
+				rest_id = int(self.path[slice_start:-5])
+				restaurant = SESSION.query(Restaurant).filter(Restaurant.id == rest_id).one()
+				print restaurant
+
+				output = ""
+				output += "<html><body>"
+				output += "<h1>Editing %s</h1>" % restaurant.name
+				output += "<form method='POST' enctype='multipart/form-data'>"
+				output += "<h2>New Name:</h2>"
+				output += "<input name='restaurant' type='text'>"
+				output += "<input type='submit' value='Rename'>"
 				output += "</form>"
 				output += "</body></html>"
 
