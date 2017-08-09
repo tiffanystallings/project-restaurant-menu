@@ -5,7 +5,7 @@
 </head>
 <body>
 	<h1>Adding a New Menu Item</h1>
-	<h2>To {{restaurant.id}}
+	<h2>To {{restaurant.name}}
 	<form action="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}" method="post">
 	<p>Name: <input type="text" size="30" name="name"></p>
 	<p>Course: <input type="text" size="30" name="course"></p>
