@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Restaurants and Menus</title>
+</head>
+<body>
+	<header>
+		<h1>{{restaurant.name}}</h1>
+	</header>
+
+	<section>
+		{% for i in items %}
+		<div class="menu-item">
+			<h2 class="item-name">{{i.name}}</h2>
+			<p class="item-desc">{{i.description}}</p>
+			<p class="item-price">{{i.price}}</p>
+		</div>
+		{% endfor %}
+	</section>
+</body>
+</html>
