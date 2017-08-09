@@ -28,12 +28,12 @@ class WebserverHandler(BaseHTTPRequestHandler):
 					output += "<h2>%s</h2>" % restaurant.name
 					output += "<a href='restaurants/%s/edit'>Edit</a>" % restaurant.id
 					output += "<br>"
-					output += "<a href='#'>Delete</a>"
+					output += "<a href='restaurants/%s/delete'>Delete</a>" % restaurant.id
 					output += "</div>" 
 				output += "</body></html>"
 
 				self.wfile.write(output)
-				print output
+				print("Loaded restaurants.")
 				return
 
 			if self.path.endswith("/restaurants/new"):
@@ -52,7 +52,7 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				output += "</body></html>"
 
 				self.wfile.write(output)
-				print output
+				print("Loaded new restaurant form.")
 				return
 
 			if self.path.find("/restaurants/") != -1 and self.path.endswith("/edit"):
@@ -63,7 +63,6 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				slice_start = self.path.find("/restaurants/") + 13
 				rest_id = int(self.path[slice_start:-5])
 				restaurant = SESSION.query(Restaurant).filter_by(id = rest_id).one()
-				print restaurant
 
 				output = ""
 				output += "<html><body>"
@@ -76,7 +75,29 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				output += "</body></html>"
 
 				self.wfile.write(output)
-				print output
+				print("Loaded editing page for restaurant %s." % restaurant.name)
+				return
+
+			if self.path.find("/restaurants/") != -1 and self.path.endswith("/delete"):
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+
+				slice_start = self.path.find("/restaurants/") + 13
+				rest_id = int(self.path[slice_start:-7])
+				restaurant = SESSION.query(Restaurant).filter_by(id = rest_id).one()
+
+				output = ""
+				output += "<html><body>"
+				output += "<h1>Are you sure you want to delete %s?</h1>" % restaurant.name
+				output += "<a href='/restaurants'><input type='button' value='Cancel'></a>"
+				output += "<form method='POST' enctype='multipart/form-data'>"
+				output += "<input type='submit' value='Delete'>"
+				output += "</form>"
+				output += "</body></html>"
+
+				self.wfile.write(output)
+				print("Loaded deletion page for restaurant %s." % restaurant.name)
 				return
 
 		except IOError:
@@ -96,6 +117,8 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				rest_id = int(self.path[slice_start:-5])
 				restaurant = SESSION.query(Restaurant).filter_by(id = rest_id).one()
 
+				print("%s staged for editing." % restaurant.name)
+
 				restaurant.name = new_name[0]
 				SESSION.add(restaurant)
 				SESSION.commit()
@@ -105,6 +128,29 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				self.end_headers()
 
 				print("Restaurant renamed!")
+				return
+
+			if self.path.find("/restaurants/") != -1 and self.path.endswith("/delete"):
+				ctype, pdict = cgi.parse_header(
+					self.headers.getheader('content-type'))
+				if ctype == 'multipart/form-data':
+					fields = cgi.parse_multipart(self.rfile, pdict)
+				new_name = fields.get('newname')
+
+				slice_start = self.path.find("/restaurants/") + 13
+				rest_id = int(self.path[slice_start:-7])
+				restaurant = SESSION.query(Restaurant).filter_by(id = rest_id).one()
+
+				print("%s staged for deletion." % restaurant.name)
+
+				SESSION.delete(restaurant)
+				SESSION.commit()
+
+				self.send_response(301)
+				self.send_header('Location', '/restaurants')
+				self.end_headers()
+
+				print("Restaurant deleted!")
 				return
 
 			if self.path.endswith('/restaurants/new'):
@@ -122,7 +168,7 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				self.send_header('Location', '/restaurants')
 				self.end_headers()
 
-				print("Restaurant added!")
+				print("Restaurant added - %s" % restaurant_name[0])
 				return
 
 		except:
