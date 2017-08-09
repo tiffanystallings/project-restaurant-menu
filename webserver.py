@@ -22,6 +22,7 @@ class WebserverHandler(BaseHTTPRequestHandler):
 				output = ""
 				output += "<html><body>"
 				output += "<h1>My Favorite Restaurants</h1>"
+				output += "<p><a href='/new'>Add a Restaurant</a></p>"
 				for restaurant in restaurants:
 					output += "<div class = 'restaurant'>"
 					output += "<h2>%s</h2>" % restaurant.name
@@ -29,6 +30,25 @@ class WebserverHandler(BaseHTTPRequestHandler):
 					output += "<br>"
 					output += "<a href='#'>Delete</a>"
 					output += "</div>" 
+				output += "</body></html>"
+
+				self.wfile.write(output)
+				print output
+				return
+
+			if self.path.endswith("/new"):
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+
+				output = ""
+				output += "<html><body>"
+				output += "<h1>Add New Restaurant</h1>"
+				output += "<form method='POST' enctype='multipart/form-data' action='/restaurants'>"
+				output += "<h2>Restaurant Name:</h2>"
+				output += "<input name='restaurant' type='text'>"
+				output += "<input type='submit' value='Add'>"
+				output += "</form>"
 				output += "</body></html>"
 
 				self.wfile.write(output)
