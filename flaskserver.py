@@ -24,7 +24,9 @@ def showMenuItems(restaurant_id):
 @app.route('/restaurants/<int:restaurant_id>/new/',
 	methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
-	return "Page to create new menu items"
+	restaurant = session.query(Restaurant).filter_by(
+		id=restaurant_id).one()
+	return render_template('new_item.html', restaurant=restaurant)
 
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',
 	methods=['GET', 'POST'])
