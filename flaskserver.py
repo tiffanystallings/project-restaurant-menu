@@ -54,7 +54,7 @@ def editMenuItem(restaurant_id, menu_id):
 		id=restaurant_id).one()
 
 	item = session.query(MenuItem).filter_by(
-		id=menu_id).one()
+		 id=menu_id).one()
 
 	if request.method == 'POST':
 		item.name = request.form['name']
@@ -74,7 +74,14 @@ def editMenuItem(restaurant_id, menu_id):
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/',
 	methods=['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
-	return "Page to delete a menu item"
+	restaurant = session.query(Restaurant).filter_by(
+		id=restaurant_id).one()
+
+	item = session.query(MenuItem).filter_by(
+		 id=menu_id).one()
+
+	
+	return render_template('delete_item.html', item=item)
 
 if __name__ == '__main__':
 	app.debug = True
