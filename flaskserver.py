@@ -21,15 +21,18 @@ def showMenuItems(restaurant_id):
 	return render_template('menu.html', restaurant=restaurant,
 		items=items)
 
-@app.route('/restaurants/<int:restaurant_id>/new/')
+@app.route('/restaurants/<int:restaurant_id>/new/',
+	methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
 	return "Page to create new menu items"
 
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/')
+@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',
+	methods=['GET', 'POST'])
 def editMenuItem(restaurant_id, menu_id):
 	return "Page to edit a menu item"
 
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/')
+@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/',
+	methods=['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
 	return "Page to delete a menu item"
 
