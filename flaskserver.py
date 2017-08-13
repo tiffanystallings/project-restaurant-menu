@@ -12,6 +12,13 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+@app.route('/')
+@app.route('/restaurants/')
+def showRestaurants():
+	restaurants = session.query(Restaurant).all()
+	return
+
+
 @app.route('/restaurants/<int:restaurant_id>/')
 def showMenuItems(restaurant_id):
 	restaurant = session.query(Restaurant).filter_by(
