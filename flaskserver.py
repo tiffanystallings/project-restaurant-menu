@@ -19,6 +19,11 @@ def showRestaurants():
 	return render_template('restaurants.html', restaurants=restaurants)
 
 
+@app.route('/restaurants/new')
+def newRestaurant():
+	return render_template('new_restaurant.html')
+
+
 @app.route('/restaurants/<int:restaurant_id>/edit/')
 def editRestaurant(restaurant_id):
 	restaurant = session.query(Restaurant).filter_by(
