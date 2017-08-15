@@ -2,14 +2,17 @@
 <html>
 <head>
 	<title>Deleting a Menu Item</title>
-	<link rel="stylesheet" type="text/css" 
-		href="{{ url_for('static', filename='styles.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+	<link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display" rel="stylesheet">
 </head>
 <body>
-	<h1>Are you sure you want to delete {{item.name}}</h1>
-	<p class="link"><a href="/restaurants/{{item.restaurant_id}}">Cancel</a></p>
-	<form action="{{ url_for('deleteMenuItem', restaurant_id=item.restaurant_id, menu_id=item.id) }}" method="post">
-		<p><input type="submit" value="Delete"></p>
-	</form>
+	<h1 class="main-head">Menupoly</h1>
+	<div class="form">
+		<h2>Are you sure you want to delete {{item.name}}</h2>
+		<form action="{{ url_for('deleteMenuItem', restaurant_id=item.restaurant_id, menu_id=item.id) }}" method="post">
+			<p><input type="submit" value="Delete"></p>
+		</form>
+		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
+	</div>
 </body>
 </html>

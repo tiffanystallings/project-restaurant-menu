@@ -2,33 +2,35 @@
 <html>
 <head>
 	<title>Editing a Menu Item</title>
-	<link rel="stylesheet" type="text/css" 
-		href="{{ url_for('static', filename='styles.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+	<link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display" rel="stylesheet">
 </head>
 <body>
-	<h1>Editing {{item.name}}</h1>
-	<h2>At {{restaurant.name}}</h2>
-	<form action="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=item.id) }}" method="post">
-	<p>Name: <input type="text" size="30" name="name" value="{{item.name}}"></p>
-	<p>Course: <select name="course">
-		<option value="Entree" {% if item.course=="Entree" %} selected {% endif %}>
-			Entree
-		</option>
-		<option value="Appetizer" {% if item.course=="Appetizer" %} selected {% endif %}>
-			Appetizer
-		</option>
-		<option value="Dessert" {% if item.course=="Dessert" %} selected {% endif %}>
-			Dessert
-		</option>
-		<option value="Beverage" {% if item.course=="Beverage" %} selected {% endif %}>
-			Beverage
-		</option>
-	</select></p>
-	<p>Price: <input type="text" size="30" name="price" value="{{item.price}}"></p>
-	<p>Description: </p>
-	<textarea name="description" rows="2" cols="50">{{item.description}}</textarea>
-	<p><input type='submit' value='Edit'></p>
-	</form>
-	<p class="link"><a href="/restaurants/{{restaurant.id}}">Cancel</a></p>
+	<h1 class="main-head">Menupoly</h1>
+	<div class="form">
+		<h2>Editing {{item.name}} At {{restaurant.name}}</h2>
+		<form action="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=item.id) }}" method="post">
+			<p>Name: <input type="text" size="30" name="name" value="{{item.name}}"></p>
+			<p>Course: <select name="course">
+				<option value="Entree" {% if item.course=="Entree" %} selected {% endif %}>
+					Entree
+				</option>
+				<option value="Appetizer" {% if item.course=="Appetizer" %} selected {% endif %}>
+						Appetizer
+				</option>
+				<option value="Dessert" {% if item.course=="Dessert" %} selected {% endif %}>
+					Dessert
+				</option>
+				<option value="Beverage" {% if item.course=="Beverage" %} selected {% endif %}>
+					Beverage
+				</option>
+			</select></p>
+			<p>Price: <input type="text" size="30" name="price" value="{{item.price}}"></p>
+			<p>Description: </p>
+			<textarea name="description" rows="2" cols="50">{{item.description}}</textarea>
+			<p><input type='submit' value='Edit'></p>
+		</form>
+		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
+	</div>
 </body>
 </html>

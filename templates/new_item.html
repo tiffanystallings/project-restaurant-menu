@@ -2,25 +2,27 @@
 <html>
 <head>
 	<title>Add a New Menu Item</title>
-	<link rel="stylesheet" type="text/css" 
-		href="{{ url_for('static', filename='styles.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+	<link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display" rel="stylesheet">
 </head>
 <body>
-	<h1>Adding a New Menu Item</h1>
-	<h2>To {{restaurant.name}}
-	<form action="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}" method="post">
-	<p>Name: <input type="text" size="30" name="name"></p>
-	<p>Course: <select name="course">
-		<option value="Entree">Entree</option>
-		<option value="Appetizer">Appetizer</option>
-		<option value="Dessert">Dessert</option>
-		<option value="Beverage">Beverage</option>
-	</select></p>
-	<p>Price: <input type="text" size="30" name="price"></p>
-	<p>Description: </p>
-	<textarea name="description" rows="2" cols="50"></textarea>
-	<p><input type='submit' value='Add'></p>
-	</form>
-	<p class="link"><a href="/restaurants/{{restaurant.id}}">Cancel</a></p>
+	<h1 class="main-head">Menupoly</h1>
+	<div class="form">
+		<h2>Adding a New Menu Item to {{restaurant.name}}</h2>
+		<form action="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}" method="post">
+			<p>Name: <input type="text" size="30" name="name"></p>
+			<p>Course: <select name="course">
+				<option value="Entree">Entree</option>
+				<option value="Appetizer">Appetizer</option>
+				<option value="Dessert">Dessert</option>
+				<option value="Beverage">Beverage</option>
+			</select></p>
+			<p>Price: <input type="text" size="30" name="price"></p>
+			<p>Description: </p>
+			<textarea name="description" rows="2" cols="50"></textarea>
+			<p><input type='submit' value='Add'></p>
+		</form>
+		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
+	</div>
 </body>
 </html>

@@ -9,7 +9,7 @@
 
 	<body>
 		<header>
-			<h1>Menupoly</h1>
+			<h1 class="main-head">Menupoly</h1>
 			{%  with messages = get_flashed_messages() %}
 			{%  if messages %}
 				<ul class="flash">
@@ -25,10 +25,8 @@
 			{% if restaurants|length %}
 			{% for restaurant in restaurants %}
 				<div class="restaurant">
-					<h2 class="rest-name">{{restaurant.name}}</h2>
-					<hr>
+					<h2 class="rest-name"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}">{{restaurant.name}}</a></h2>
 					<ul class="rest-links">
-						<li><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}">Menu</a></li>
 						<li><a href="{{ url_for('editRestaurant', restaurant_id=restaurant.id) }}">Edit</a></li>
 						<li><a href="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id) }}">Delete</a></li>
 					</ul>

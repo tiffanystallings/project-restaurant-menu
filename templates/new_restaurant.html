@@ -2,18 +2,21 @@
 <html lang="en-us">
 	<head>
 		<title>Add Restaurant</title>
-		<link rel="stylesheet" type="text/css" 
-		href="{{ url_for('static', filename='styles.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+		<link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display" rel="stylesheet">
 	</head>
 
 	<body>
-		<h1>Adding a New Restaurant</h1>
-		<p class="link"><a href="/restaurants/">Back</a></p>
-		<form action="{{ url_for('newRestaurant') }}" method="post">
-			<p>Restaurant Name: 
-				<input type="text" name="name">
-				<input type="submit" value="Add">
-			</p>
-		</form>
+		<h1 class="main-head">Menupoly</h1>
+		<h2>Adding a New Restaurant</h2>
+		<div class="form">
+			<form action="{{ url_for('newRestaurant') }}" method="post">
+				<p>Restaurant Name: 
+					<input type="text" name="name">
+					<input type="submit" value="Add">
+				</p>
+			</form>
+			<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
+		</div>
 	</body>
 </html>
