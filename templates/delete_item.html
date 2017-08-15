@@ -12,7 +12,7 @@
 		<form action="{{ url_for('deleteMenuItem', restaurant_id=item.restaurant_id, menu_id=item.id) }}" method="post">
 			<p><input type="submit" value="Delete"></p>
 		</form>
-		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
+		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=item.restaurant_id)}}">Cancel</a></p>
 	</div>
 </body>
 </html>
