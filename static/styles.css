@@ -1,3 +1,5 @@
+
+/* Page-wide */
 * {
 	box-sizing: border-box;
 }
@@ -11,6 +13,17 @@ body {
 	font-family: sans-serif;
 }
 
+hr {
+	margin: 20px 0 20px 0;
+}
+
+.restaurant, .menu, .form {
+	background-color: white;
+	border: 3px solid black;
+	border-radius: 1%;
+}
+
+/* Main Header */
 .main-head {
 	text-align: center;
 	padding: 10px;
@@ -22,20 +35,19 @@ body {
 	color: red;
 }
 
+/* Sections */
 section {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
 }
 
-.course-head, .rest-name {
-	text-align: center;
-	color: red;
-}
-
+/* Restaurant Cards */
 .restaurant {
 	display: inline-flex;
 	padding: 20px;
+	width: 100%;
+	margin: 5px;
 }
 
 .restaurant:hover {
@@ -48,6 +60,7 @@ section {
 	font-size: 25px;
 	text-transform: uppercase;
 	letter-spacing: 3px;
+	color: red;
 }
 
 .restaurant ul {
@@ -60,25 +73,12 @@ section {
 	text-decoration: none;
 }
 
-hr {
-	margin: 20px 0 20px 0;
-}
-
-.restaurant, .menu {
-	background-color: white;
-	border: 3px solid black;
-	border-radius: 1%;
-}
-
-.restaurant {
-	width: 100%;
-	margin: 5px;
-}
-
+/* Menu Pages */
 .menu {
 	width: 100%;
 }
 
+/* Links */
 .link {
 	width: 100%;
 	font-size: 20px;
@@ -108,6 +108,12 @@ li a, li a:visited {
 	text-decoration: none;
 }
 
+.cancel a, .cancel a:visited {
+	color: red;
+	text-decoration: none;
+}
+
+/* Flashing */
 .flash {
 	width: 100%;
 	color: white;
