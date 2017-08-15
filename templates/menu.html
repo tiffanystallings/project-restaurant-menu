@@ -48,8 +48,8 @@
 				{% for entree in entrees %}
 				<div class="menu-item">
 					<h4 class="item-name">{{entree.name}}</h4>
-					<p class="item-desc">{{entree.description}}</p>
 					<p class="item-price">{{entree.price}}</p>
+					<p class="item-desc">{{entree.description}}</p>
 					<ul class="item-links">
 						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=entree.id) }}">Edit</a></li>
 						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=entree.id) }}">Delete</a></li>
@@ -66,8 +66,8 @@
 				{% for dessert in desserts %}
 				<div class="menu-item">
 					<h4 class="item-name">{{dessert.name}}</h4>
-					<p class="item-desc">{{dessert.description}}</p>
 					<p class="item-price">{{dessert.price}}</p>
+					<p class="item-desc">{{dessert.description}}</p>
 					<ul class="item-links">
 						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=dessert.id) }}">Edit</a></li>
 						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=dessert.id) }}">Delete</a></li>
@@ -84,8 +84,8 @@
 				{% for bev in bevs %}
 				<div class="menu-item">
 					<h4 class="item-name">{{bev.name}}</h4>
-					<p class="item-desc">{{bev.description}}</p>
 					<p class="item-price">{{bev.price}}</p>
+					<p class="item-desc">{{bev.description}}</p>
 					<ul class="item-links">
 						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=bev.id) }}">Edit</a></li>
 						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=bev.id) }}">Delete</a></li>
@@ -97,8 +97,8 @@
 		{% else %}
 		<p>There's nothing on this menu yet!</p>
 		{% endif %}
-		<p class="link"><a href="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}">Add a Menu Item</a></p>
 		</div>
+		<p class="link"><a href="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}">Add a Menu Item</a></p>
 	</section>
 </body>
 </html>
