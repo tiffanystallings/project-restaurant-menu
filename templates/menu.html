@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Restaurants and Menus</title>
+	<title>{{ restaurant.name }}</title>
 	<link rel="stylesheet" type="text/css" 
 		href="{{ url_for('static', filename='styles.css') }}">
 </head>
@@ -20,6 +20,7 @@
 		<p><a href="{{ url_for('showRestaurants') }}">Back to Restaurants</a></p>
 	</header>
 	<section>
+		{% if items.count() > 0 %}
 		{% for i in items %}
 		<div class="menu-item">
 			<h2 class="item-name">{{i.name}}</h2>
@@ -31,6 +32,9 @@
 			</ul>
 		</div>
 		{% endfor %}
+		{% else %}
+			<p>There's nothing on this menu yet!</p>
+		{% endif %}
 		<p><a href="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}">Add a Menu Item</a></p>
 	</section>
 </body>

@@ -10,6 +10,7 @@
 		</header>
 
 		<section>
+			{% if restaurants.count() > %}
 			{% for restaurant in restaurants %}
 				<div class="restaurant">
 					<h2 class="rest-name">{{restaurant.name}}</h2>
@@ -20,6 +21,9 @@
 					</ul>
 				</div>
 			{% endfor %}
+			{% else %}
+				<p>Looks like you haven't added any restaurants!</p>
+			{% endif %}
 			<p class="add-rest">
 				<a href="{{ url_for('newRestaurant') }}">Add a Restaurant</a>
 			</p>
