@@ -1,3 +1,89 @@
 * {
 	box-sizing: border-box;
 }
+
+body {
+	background-image: url(background.png);
+	background-size: 100vw 100vh;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	padding: 50px;
+	font-family: sans-serif;
+}
+
+h1 {
+	text-align: center;
+	padding: 10px;
+	border: 3px solid black;
+	border-radius: 50%;
+	background-color: white;
+	font-family: 'Sedgwick Ave Display', cursive;
+	font-size: 60px;
+	color: red;
+}
+
+.course-head, .rest-name {
+	text-align: center;
+	color: red;
+}
+
+.rest-name {
+	font-size: 40px;
+}
+
+section {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+hr {
+	margin: 20px 0 20px 0;
+}
+
+.restaurant, .menu {
+	background-color: white;
+	border: 3px solid black;
+	border-radius: 1%;
+}
+
+.restaurant {
+	width: 45%;
+	height: 250px;
+	margin: 20px;
+}
+
+.menu {
+	width: 100%;
+}
+
+.link {
+	width: 100%;
+	font-size: 20px;
+	text-align: center;
+}
+
+.link a:visited, .link a {
+	color: white;
+}
+
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+.item-links li, .rest-links li {
+	display: inline;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 1%;
+	background-color: red;
+	color: white;
+}
+
+li a, li a:visited {
+	color: white;
+	text-decoration: none;
+}

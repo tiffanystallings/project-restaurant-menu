@@ -2,6 +2,9 @@
 <html lang="en-us">
 	<head>
 		<title>Menupoly</title>
+		<link rel="stylesheet" type="text/css" 
+		href="{{ url_for('static', filename='styles.css') }}">
+		<link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display" rel="stylesheet">
 	</head>
 
 	<body>
@@ -23,6 +26,7 @@
 			{% for restaurant in restaurants %}
 				<div class="restaurant">
 					<h2 class="rest-name">{{restaurant.name}}</h2>
+					<hr>
 					<ul class="rest-links">
 						<li><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}">Menu</a></li>
 						<li><a href="{{ url_for('editRestaurant', restaurant_id=restaurant.id) }}">Edit</a></li>
@@ -33,7 +37,7 @@
 			{% else %}
 				<p>Looks like you haven't added any restaurants!</p>
 			{% endif %}
-			<p class="add-rest">
+			<p class="link">
 				<a href="{{ url_for('newRestaurant') }}">Add a Restaurant</a>
 			</p>
 		</section>
