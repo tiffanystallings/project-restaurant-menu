@@ -14,13 +14,13 @@
 				<div class="restaurant">
 					<h2 class="rest-name">{{restaurant.name}}</h2>
 					<ul class="rest-links">
-						<li><a href="#">Edit</a></li>
-						<li><a href="#">Delete</a></li>
+						<li><a href="{{ url_for('editRestaurant', restaurant_id=restaurant.id) }}">Edit</a></li>
+						<li><a href="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id) }}">Delete</a></li>
 					</ul>
 				</div>
 			{% endfor %}
 			<p class="add-rest">
-				<a href="#">Add a Restaurant</a>
+				<a href="{{ url_for('newRestaurant') }}">Add a Restaurant</a>
 			</p>
 		</section>
 	</body>
