@@ -78,6 +78,35 @@ section {
 	width: 100%;
 }
 
+.menu .rest-name {
+	text-align: center;
+	font-size: 30px;
+	text-transform: uppercase;
+	letter-spacing: 3px;
+	color: red;
+}
+.course-head {
+	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 3px;
+	color: red;
+}
+
+.menu-item {
+	padding: 20px;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.item-name, .item-desc {
+	width: 75%;
+}
+
+.item-price, .item-links {
+	width: 20%;
+	text-align: right;
+}
+
 /* Forms */
 .form {
 	padding: 20px;
