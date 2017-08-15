@@ -11,7 +11,7 @@ body {
 	font-family: sans-serif;
 }
 
-h1 {
+.main-head {
 	text-align: center;
 	padding: 10px;
 	border: 3px solid black;
@@ -22,19 +22,42 @@ h1 {
 	color: red;
 }
 
+section {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
 .course-head, .rest-name {
 	text-align: center;
 	color: red;
 }
 
-.rest-name {
-	font-size: 40px;
+.restaurant {
+	display: inline-flex;
+	padding: 20px;
 }
 
-section {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
+.restaurant:hover {
+	background-color: #fffddd;
+}
+
+.restaurant .rest-name {
+	text-align: left;
+	width: 75%;
+	font-size: 25px;
+	text-transform: uppercase;
+	letter-spacing: 3px;
+}
+
+.restaurant ul {
+	width: 20%;
+	text-align: right;
+}
+
+.rest-name a, .rest-name a:visited {
+	color: red;
+	text-decoration: none;
 }
 
 hr {
@@ -48,9 +71,8 @@ hr {
 }
 
 .restaurant {
-	width: 45%;
-	height: 250px;
-	margin: 20px;
+	width: 100%;
+	margin: 5px;
 }
 
 .menu {
@@ -69,16 +91,14 @@ hr {
 
 ul {
 	list-style-type: none;
-	margin: 0;
 	padding: 0;
-	text-align: center;
 }
 
 .item-links li, .rest-links li {
 	display: inline;
 	margin: 10px;
 	padding: 10px;
-	border-radius: 1%;
+	border-radius: 3%;
 	background-color: red;
 	color: white;
 }
@@ -86,4 +106,10 @@ ul {
 li a, li a:visited {
 	color: white;
 	text-decoration: none;
+}
+
+.flash {
+	width: 100%;
+	color: white;
+	text-align: center;
 }
