@@ -78,6 +78,11 @@ section {
 	width: 100%;
 }
 
+/* Forms */
+.form {
+	padding: 20px;
+}
+
 /* Links */
 .link {
 	width: 100%;
@@ -111,6 +116,7 @@ li a, li a:visited {
 .cancel a, .cancel a:visited {
 	color: red;
 	text-decoration: none;
+	font-weight: bold;
 }
 
 /* Flashing */
