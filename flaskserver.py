@@ -71,10 +71,18 @@ def showMenuItems(restaurant_id):
 	restaurant = session.query(Restaurant).filter_by(
 		id=restaurant_id).one()
 	items = session.query(MenuItem).filter_by(restaurant_id =
-		restaurant.id)
+		restaurant.id).all()
+	apps = session.query(MenuItem).filter_by(restaurant_id =
+		restaurant.id, course='Appetizer').all()
+	entrees = session.query(MenuItem).filter_by(restaurant_id =
+		restaurant.id, course='Entree').all()
+	desserts = session.query(MenuItem).filter_by(restaurant_id =
+		restaurant.id, course='Dessert').all()
+	bevs = session.query(MenuItem).filter_by(restaurant_id =
+		restaurant.id, course='Beverage').all()
 	
 	return render_template('menu.html', restaurant=restaurant,
-		items=items)
+		items=items, apps=apps, entrees=entrees, desserts=desserts, bevs=bevs)
 
 
 @app.route('/restaurants/<int:restaurant_id>/new/',
