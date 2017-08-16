@@ -6,6 +6,8 @@ from sqlalchemy.orm import sessionmaker
 
 from database_setup import Base, Restaurant, MenuItem
 
+import string, random
+
 app = Flask(__name__)
 
 engine = create_engine('sqlite:///restaurantmenu.db')
