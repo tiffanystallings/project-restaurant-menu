@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="en-us">
-	<head>
-		<title>Menupoly</title>
-		<link rel="stylesheet" type="text/css" 
-		href="{{ url_for('static', filename='styles.css') }}">
-		<link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display" rel="stylesheet">
-	</head>
+<head>
+	<title>Menupoly</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+	<link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display" rel="stylesheet">
 
-	<body>
-		<header>
-			<h1 class="main-head">Menupoly</h1>
-			{%  with messages = get_flashed_messages() %}
-			{%  if messages %}
-				<ul class="flash">
-				{% for message in messages %}
-					<li><strong>{{ message }}</strong></li>
-				{% endfor %}
-				</ul>
-			{% endif %}
-			{% endwith %}
-		</header>
+	<!-- Pre requisites for Google Sign In -->
+	<meta name="google-signin-client_id" content="6593651812-g6n1kkdkvnet3e1v3f10jnbleqkq6137.apps.googleusercontent.com">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+  	</script>
+	<script src="//apis.google.com/js/platform.js" async defer>
+	</script>
+</head>
 
-		<section>
-			{% if restaurants|length %}
-			{% for restaurant in restaurants %}
-				<div class="restaurant">
-					<h2 class="rest-name"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}">{{restaurant.name}}</a></h2>
-					<ul class="rest-links">
-						<li><a href="{{ url_for('editRestaurant', restaurant_id=restaurant.id) }}">Edit</a></li>
-						<li><a href="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id) }}">Delete</a></li>
-					</ul>
-				</div>
+<body>
+	<header>
+		<h1 class="main-head">Menupoly</h1>
+		{%  with messages = get_flashed_messages() %}
+		{%  if messages %}
+			<ul class="flash">
+			{% for message in messages %}
+				<li><strong>{{ message }}</strong></li>
 			{% endfor %}
-			{% else %}
-				<p>Looks like you haven't added any restaurants!</p>
-			{% endif %}
-			<p class="link">
-				<a href="{{ url_for('newRestaurant') }}">Add a Restaurant</a>
-			</p>
-		</section>
-	</body>
+			</ul>
+		{% endif %}
+		{% endwith %}
+	</header>
+
+	<section>
+		{% if restaurants|length %}
+		{% for restaurant in restaurants %}
+			<div class="restaurant">
+				<h2 class="rest-name"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}">{{restaurant.name}}</a></h2>
+				<ul class="rest-links">
+					<li><a href="{{ url_for('editRestaurant', restaurant_id=restaurant.id) }}">Edit</a></li>
+					<li><a href="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id) }}">Delete</a></li>
+				</ul>
+			</div>
+		{% endfor %}
+		{% else %}
+			<p>Looks like you haven't added any restaurants!</p>
+		{% endif %}
+		<p class="link">
+			<a href="{{ url_for('newRestaurant') }}">Add a Restaurant</a>
+		</p>
+	</section>
+</body>
 </html>
