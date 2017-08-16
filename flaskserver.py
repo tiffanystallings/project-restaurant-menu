@@ -24,6 +24,9 @@ import json
 import httplib2
 import requests
 
+CLIENT_ID = json.loads(
+	open('client_secrets.json', 'r').read())['web']['client_id']
+
 app = Flask(__name__)
 
 engine = create_engine('sqlite:///restaurantmenu.db')
@@ -211,6 +214,11 @@ def showLogin():
 		for x in xrange(32))
 	login_session['state'] = state
 	return render_template('login.html')
+
+
+@app.route('/gconnect', methods=['POST'])
+def gconnect():
+	return
 
 
 if __name__ == '__main__':
