@@ -13,9 +13,9 @@
 </head>
 <body>
 	<!-- Sign in Buttons -->
-	<div id="signinButtons">
+	<div id="signInButtons">
 		<span class="g-signin"
-			data-scope="open-id"
+			data-scope="openid"
 			data-clientid="6593651812-g6n1kkdkvnet3e1v3f10jnbleqkq6137.apps.googleusercontent.com"
 			data-redirecturi="postmessage"
 			data-accesstype="offline"
@@ -29,7 +29,8 @@
 	<script>
 		function signInCallback(authResult) {
 			if (authResult['code']) {
-				$('#signinButtons').attr('style', 'display: none');
+				$('#signInButtons').attr('style', 'display: none');
+
 				$.ajax({
 					type: 'POST',
 					url: '/gconnect?state={{STATE}}',
@@ -40,7 +41,7 @@
 						if (result) {
 							$('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')
 							setTimeout(function() {
-								window.location.href = "/restaurant";
+								window.location.href = "/restaurants";
 							}, 4000);
 						} else if (authResult['error']) {
 							console.log('There was an error: ' + authResult['error']);
