@@ -1,12 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask
+from flask import render_template
+from flask import request
+from flask import redirect
+from flask import url_for
+from flask import flash
+from flask import jsonify
+from flask import make_response
 from flask import session as login_session
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Base, Restaurant, MenuItem
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
 
-import string, random
+from database_setup import Base
+from database_setup import Restaurant
+from database_setup import MenuItem
+
+import string
+import random
+import json
+import httplib2
+import requests
 
 app = Flask(__name__)
 
@@ -194,7 +210,7 @@ def showLogin():
 	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
 		for x in xrange(32))
 	login_session['state'] = state
-	return 'The current session state is %s' % login_session['state']
+	return render_template('login.html')
 
 
 if __name__ == '__main__':
