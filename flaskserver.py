@@ -188,9 +188,13 @@ def menuItemJSON(restaurant_id, menu_id):
 
 	return jsonify(MenuItem=[item.serialize])
 
+
 @app.route('/login/')
 def showLogin():
-	return
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+	return 'The current session state is %s' % login_session['state']
 
 
 if __name__ == '__main__':
