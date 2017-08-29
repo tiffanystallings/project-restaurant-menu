@@ -36,7 +36,7 @@
 								contentType: 'application/octet-stream; charset=utf-8',
 								success: function(result) {
 									if (result) {
-										window.location.href = "/restaurants";
+										window.location.href = "{{ url_for('deleteMenuItem', restaurant_id=item.restaurant_id, menu_id=item.id) }}";
 									}
 								}
 							})
@@ -63,7 +63,7 @@
 					$('#signInButtons').attr('style', 'display: none');
 					{% if user == None %}
 					setTimeout(function(){
-						window.location.href = '/restaurants'
+						window.location.href = "{{ url_for('deleteMenuItem', restaurant_id=item.restaurant_id, menu_id=item.id) }}"
 					}, 1000);
 					
 					var auth = googleUser.getAuthResponse();
@@ -88,7 +88,10 @@
 				}
 
 				function onSignInFailure() {
-					$('#result').html('Sign in failed -- please try again.');
+					$('.login-bar').html('Sign in failed -- please try again.');
+					setTimeout(function(){
+						window.location.href = "{{ url_for('deleteMenuItem', restaurant_id=item.restaurant_id, menu_id=item.id) }}"
+					}, 1000);
 				}
 			</script>
 		</div>
@@ -109,11 +112,15 @@
 	</header>
 	
 	<div class="form">
+	{% if user != None %}
 		<h2>Are you sure you want to delete {{item.name}}</h2>
 		<form action="{{ url_for('deleteMenuItem', restaurant_id=item.restaurant_id, menu_id=item.id) }}" method="post">
 			<p><input type="submit" value="Delete"></p>
 		</form>
 		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=item.restaurant_id)}}">Cancel</a></p>
+	{% else %}
+		<p class="error">You must be logged in to delete menu items.</p>
+	{% endif %}
 	</div>
 </body>
 </html>
