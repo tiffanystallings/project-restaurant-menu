@@ -36,7 +36,7 @@
 								contentType: 'application/octet-stream; charset=utf-8',
 								success: function(result) {
 									if (result) {
-										window.location.href = "/restaurants";
+										window.location.href = "{{ url_for('newRestaurant') }}";
 									}
 								}
 							})
@@ -63,7 +63,7 @@
 					$('#signInButtons').attr('style', 'display: none');
 					{% if user == None %}
 					setTimeout(function(){
-						window.location.href = '/restaurants'
+						window.location.href = "{{ url_for('newRestaurant') }}"
 					}, 1000);
 					
 					var auth = googleUser.getAuthResponse();
@@ -88,7 +88,10 @@
 				}
 
 				function onSignInFailure() {
-					$('#result').html('Sign in failed -- please try again.');
+					$('.login-bar').html('Sign in failed -- please try again.');
+					setTimeout(function(){
+						window.location.href = '/restaurants'
+					}, 1000);
 				}
 			</script>
 		</div>
@@ -109,6 +112,7 @@
 	</header>
 	
 	<div class="form">
+	{% if user != None %}
 		<h2>Adding a New Restaurant</h2>
 		<form action="{{ url_for('newRestaurant') }}" method="post">
 			<p>Restaurant Name: 
@@ -117,6 +121,9 @@
 			</p>
 		</form>
 		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
+	{% else %}
+	<p class="error">You must be signed in to add a new restaurant.</p>
+	{% endif %}
 	</div>
 </body>
 </html>
