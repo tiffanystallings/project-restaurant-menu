@@ -41,7 +41,14 @@ session = DBSession()
 def showRestaurants():
 	restaurants = session.query(Restaurant).all()
 
-	return render_template('restaurants.html', restaurants=restaurants)
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+
+	user = login_session.get('username')
+
+	return render_template('restaurants.html', 
+		restaurants=restaurants, STATE=state, user=user)
 
 
 @app.route('/restaurants/new', 
@@ -271,7 +278,7 @@ def gconnect():
 		return response
 
 #	# Verify that the access token is for the intended user
-#	gplus_id = credentials.id_token['sub']
+	gplus_id = result['sub']
 #	if result['user_id'] != gplus_id:
 #		response = make_response(json.dumps(
 #			"Token's user ID doesn't match given user ID."), 401)
@@ -325,7 +332,7 @@ def gconnect():
 	return output
 
 
-@app.route('/gdisconnect' methods=['POST'])
+@app.route('/gdisconnect', methods=['POST'])
 def gDisconnect():
 
 	# Check if user is actually connected
@@ -342,18 +349,18 @@ def gDisconnect():
 #	result = h.request(url, 'GET')[0]
 #
 #	if result['status'] == '200':
-#		# Reset the user's session.
-#		del login_session['access_token']
-#		del login_session['gplus_id']
-#		del login_session['username']
-#		del login_session['picture']
+	# Reset the user's session.
+	del login_session['access_token']
+	del login_session['gplus_id']
+	del login_session['username']
+	del login_session['picture']
 #
-#		response = make_response(json.dumps('Successfully disconnected'),
-#			200)
-#		response.headers['Content-Type'] = 'application/json'
+	response = make_response(json.dumps('Successfully disconnected'),
+			200)
+	response.headers['Content-Type'] = 'application/json'
 #
-#		flash('You are now logged out.')
-#		return response
+	flash('You are now logged out.')
+	return response
 #
 #	# Token was invalid
 #	else:
