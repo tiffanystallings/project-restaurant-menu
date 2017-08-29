@@ -68,7 +68,8 @@
 
 					var auth = googleUser.getAuthResponse();
 					var id_token = auth.id_token;
-					console.log('Sign in successful.')
+					console.log('Sign in successful.');
+					console.log('{{user_id}}');
 
 					$.ajax({
 						type: 'POST',
@@ -116,10 +117,12 @@
 		{% for restaurant in restaurants %}
 			<div class="restaurant">
 				<h2 class="rest-name"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}">{{restaurant.name}}</a></h2>
+				{% if user_id == restaurant.user_id or user_id == 2 %}
 				<ul class="rest-links">
 					<li><a href="{{ url_for('editRestaurant', restaurant_id=restaurant.id) }}">Edit</a></li>
 					<li><a href="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id) }}">Delete</a></li>
 				</ul>
+				{% endif %}
 			</div>
 		{% endfor %}
 		{% else %}
