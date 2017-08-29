@@ -54,6 +54,12 @@ def showRestaurants():
 @app.route('/restaurants/new', 
 	methods=['GET', 'POST'])
 def newRestaurant():
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+
+	user = login_session.get('username')
+
 	if request.method == 'POST':
 		newRest = Restaurant(
 			name = request.form['name'])
@@ -64,7 +70,7 @@ def newRestaurant():
 
 		return redirect(url_for('showRestaurants'))
 
-	return render_template('new_restaurant.html')
+	return render_template('new_restaurant.html', STATE=state, user=user)
 
 
 @app.route('/restaurants/<int:restaurant_id>/edit/',
@@ -72,6 +78,12 @@ def newRestaurant():
 def editRestaurant(restaurant_id):
 	restaurant = session.query(Restaurant).filter_by(
 		id=restaurant_id).one()
+
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+
+	user = login_session.get('username')
 
 	if request.method == 'POST':
 		restaurant.name = request.form['name']
@@ -82,7 +94,8 @@ def editRestaurant(restaurant_id):
 
 		return redirect(url_for('showRestaurants'))
 
-	return render_template('edit_restaurant.html', restaurant=restaurant)
+	return render_template('edit_restaurant.html', restaurant=restaurant,
+			STATE=state, user=user)
 
 
 @app.route('/restaurants/<int:restaurant_id>/delete/',
@@ -91,13 +104,20 @@ def deleteRestaurant(restaurant_id):
 	restaurant = session.query(Restaurant).filter_by(
 		id=restaurant_id).one()
 
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+
+	user = login_session.get('username')
+
 	if request.method == 'POST':
 		session.delete(restaurant)
 		session.commit()
 		flash('Restaurant deleted successfully!')
 
 		return redirect(url_for('showRestaurants'))
-	return render_template('delete_restaurant.html', restaurant=restaurant)
+	return render_template('delete_restaurant.html', restaurant=restaurant,
+			STATE=state, user=user)
 
 
 @app.route('/restaurants/<int:restaurant_id>/')
@@ -114,9 +134,16 @@ def showMenuItems(restaurant_id):
 		restaurant.id, course='Dessert').all()
 	bevs = session.query(MenuItem).filter_by(restaurant_id =
 		restaurant.id, course='Beverage').all()
+
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+
+	user = login_session.get('username')
 	
 	return render_template('menu.html', restaurant=restaurant,
-		items=items, apps=apps, entrees=entrees, desserts=desserts, bevs=bevs)
+			items=items, apps=apps, entrees=entrees, desserts=desserts, bevs=bevs,
+			STATE=state, user=user)
 
 
 @app.route('/restaurants/<int:restaurant_id>/new/',
@@ -124,6 +151,12 @@ def showMenuItems(restaurant_id):
 def newMenuItem(restaurant_id):
 	restaurant = session.query(Restaurant).filter_by(
 		id=restaurant_id).one()
+
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+
+	user = login_session.get('username')
 
 	if request.method == 'POST':
 		newItem = MenuItem(
@@ -141,7 +174,8 @@ def newMenuItem(restaurant_id):
 		return redirect(url_for('showMenuItems',
 			restaurant_id = restaurant_id))
 
-	return render_template('new_item.html', restaurant=restaurant)
+	return render_template('new_item.html', restaurant=restaurant,
+			STATE=state, user=user)
 
 
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',
@@ -152,6 +186,12 @@ def editMenuItem(restaurant_id, menu_id):
 
 	item = session.query(MenuItem).filter_by(
 		 id=menu_id).one()
+
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+
+	user = login_session.get('username')
 
 	if request.method == 'POST':
 		item.name = request.form['name']
@@ -166,7 +206,8 @@ def editMenuItem(restaurant_id, menu_id):
 		return redirect(url_for('showMenuItems',
 			restaurant_id = restaurant_id))
 
-	return render_template('edit_item.html', restaurant=restaurant, item=item)
+	return render_template('edit_item.html', restaurant=restaurant, item=item,
+			STATE=state, user=user)
 
 
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/',
@@ -178,6 +219,12 @@ def deleteMenuItem(restaurant_id, menu_id):
 	item = session.query(MenuItem).filter_by(
 		 id=menu_id).one()
 
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+		for x in xrange(32))
+	login_session['state'] = state
+
+	user = login_session.get('username')
+
 	if request.method == 'POST':
 		session.delete(item)
 		session.commit()
@@ -186,7 +233,8 @@ def deleteMenuItem(restaurant_id, menu_id):
 		return redirect(url_for('showMenuItems',
 			restaurant_id = restaurant_id))
 
-	return render_template('delete_item.html', item=item)
+	return render_template('delete_item.html', item=item,
+			STATE=state, user=user)
 
 
 @app.route('/restaurants/JSON')
