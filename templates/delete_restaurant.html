@@ -113,14 +113,21 @@
 	
 	<div class="form">
 	{% if user != None %}
+		{% if user_id == restaurant.user_id or user_id == 2 %}
 		<h2>Are you sure you want to delete {{ restaurant.name }}?</h2>
 		<form action="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id) }}" method="post">
 			<p><input type="submit" value="Delete"></p>
 		</form>
 		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 
+		{% else %}
+		<p class="error">You are not authorized to delete this restaurant.</p>
+		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
+		{% endif %}
+
 	{% else %}
 		<p class="error">You must be signed in to delete this restaurant.</p>
+		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 	{% endif %}
 	</div>
 </body>

@@ -113,6 +113,7 @@
 	
 	<div class="form">
 	{% if user != None %}
+		{% if user_id == restaurant.user_id or user_id == 2 %}
 		<h2>Editing {{item.name}} At {{restaurant.name}}</h2>
 		<form action="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=item.id) }}" method="post">
 			<p>Name: <input type="text" size="30" name="name" value="{{item.name}}"></p>
@@ -136,8 +137,15 @@
 			<p><input type='submit' value='Edit'></p>
 		</form>
 		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
+
+		{% else %}
+		<p class="error">You are not authorized to edit this menu item.</p>
+		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
+		{% endif %}
+
 	{% else %}
 		<p class="error">You must be logged in to edit items.</p>
+		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 	{% endif %}
 	</div>
 </body>

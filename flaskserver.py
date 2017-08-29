@@ -243,7 +243,7 @@ def deleteMenuItem(restaurant_id, menu_id):
 		return redirect(url_for('showMenuItems',
 			restaurant_id = restaurant_id))
 
-	return render_template('delete_item.html', item=item,
+	return render_template('delete_item.html', item=item, restaurant=restaurant,
 			STATE=state, user=user, user_id=user_id)
 
 
