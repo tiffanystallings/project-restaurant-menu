@@ -9,12 +9,105 @@
 	<meta name="google-signin-client_id" content="6593651812-g6n1kkdkvnet3e1v3f10jnbleqkq6137.apps.googleusercontent.com">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
   	</script>
-	<script src="//apis.google.com/js/platform.js" async defer>
+	<script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
 	</script>
 </head>
 
 <body>
-	<h1 class="main-head">Menupoly</h1>
+	<header>
+		<!-- User Authentication -->
+		<div class="login-bar">
+		{% if user != None %}
+			<p class="welcome">
+				Welcome, {{ user }}!
+				<span class="logout">
+					<a href="#" onclick="signOut();">Log Out</a>
+					<script>
+						function signOut() {
+							var auth2=gapi.auth2.getAuthInstance();
+							auth2.signOut().then(function() {
+								console.log('User signed out.');
+							})
+
+							$.ajax({
+								type: 'POST',
+								url: '/gdisconnect',
+								processData: false,
+								contentType: 'application/octet-stream; charset=utf-8',
+								success: function(result) {
+									if (result) {
+										window.location.href = "/restaurants";
+									}
+								}
+							})
+						}
+					</script>
+				</span>
+			</p>
+
+		{% endif %}
+
+			<div id="signInButtons">
+				<span class="g-signin2"
+					data-scope="https://www.googleapis.com/auth/plus.login"
+					data-redirecturi="postmessage"
+					data-accesstype="offline"
+					data-cookiepolicy="single_host_origin"
+					data-onsuccess="onSignIn"
+					data-onfailure="onSignInFailure">
+				</span>
+			</div>
+	
+			<script>
+				function onSignIn(googleUser) {
+					$('#signInButtons').attr('style', 'display: none');
+					{% if user == None %}
+					setTimeout(function(){
+						window.location.href = '/restaurants'
+					}, 1000);
+					
+					var auth = googleUser.getAuthResponse();
+					var id_token = auth.id_token;
+					console.log('Sign in successful.')
+
+					$.ajax({
+						type: 'POST',
+						url: '/gconnect?state={{STATE}}',
+						processData: false,
+						contentType: 'application/octet-stream; charset=utf-8',
+						data: id_token,
+						success: function(result) {
+							if (result) {
+								console.log('OK from server.');
+							} else {
+								console.log('Error processing login');
+							}
+						}
+					})
+					{% endif %}
+				}
+
+				function onSignInFailure() {
+					$('#result').html('Sign in failed -- please try again.');
+				}
+			</script>
+		</div>
+		<!-- End User Authentication -->
+
+		<!-- Title and Message Flashing -->
+		<h1 class="main-head">Menupoly</h1>
+		{%  with messages = get_flashed_messages() %}
+		{%  if messages %}
+			<ul class="flash">
+			{% for message in messages %}
+				<li><strong>{{ message }}</strong></li>
+			{% endfor %}
+			</ul>
+		{% endif %}
+		{% endwith %}
+		<!-- End Title and Message Flashing -->
+	</header>
+	
 	<div class="form">
 		<h2>Adding a New Restaurant</h2>
 		<form action="{{ url_for('newRestaurant') }}" method="post">
