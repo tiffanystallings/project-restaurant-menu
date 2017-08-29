@@ -325,7 +325,6 @@ def gconnect():
 	if result['aud'] != CLIENT_ID:
 		response = make_response(json.dumps(
 			"Token's client ID does not match app's."), 401)
-		print "Token's client ID does not match app's."
 		response.headers['Content-Type'] = 'application/json'
 		return response
 
@@ -349,13 +348,16 @@ def gconnect():
 	user_id = getUserID(login_session['email'])
 
 	# If user is not in database, add user.
-	if user_id is not None:
+	if user_id is None:
 		user_id = createUser(login_session)
 
 	# Store user id in login session.
 	login_session['user_id'] = user_id
 
-	return
+	response = make_response(json.dumps('Login successful'),
+			200)
+	response.headers['Content-Type'] = 'application/json'
+	return response
 
 
 @app.route('/gdisconnect', methods=['POST'])
