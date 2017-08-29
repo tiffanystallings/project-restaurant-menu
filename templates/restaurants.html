@@ -65,7 +65,7 @@
 					setTimeout(function(){
 						window.location.href = '/restaurants'
 					}, 1000);
-					
+
 					var auth = googleUser.getAuthResponse();
 					var id_token = auth.id_token;
 					console.log('Sign in successful.')
@@ -95,7 +95,7 @@
 		<!-- End User Authentication -->
 
 		<!-- Title and Message Flashing -->
-		<h1 class="main-head">Menupoly</h1>
+		<h1 class="main-head"><a href ="{{ url_for('showRestaurants') }}">Menupoly</a></h1>
 		{%  with messages = get_flashed_messages() %}
 		{%  if messages %}
 			<ul class="flash">
