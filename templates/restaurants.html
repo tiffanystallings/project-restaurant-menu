@@ -88,7 +88,10 @@
 				}
 
 				function onSignInFailure() {
-					$('#result').html('Sign in failed -- please try again.');
+					$('.login-bar').html('Sign in failed -- please try again.');
+					setTimeout(function(){
+						window.location.href = '/restaurants'
+					}, 1000);
 				}
 			</script>
 		</div>

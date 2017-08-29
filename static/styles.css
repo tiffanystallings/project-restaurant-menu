@@ -29,7 +29,7 @@ hr {
 .login-bar {
 	width: 100%;
 	margin: 0;
-	padding: 0;
+	padding: 10px;
 	border: 0;
 	height: 60px;
 	background-color: black;
