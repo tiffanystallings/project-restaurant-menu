@@ -125,8 +125,10 @@
 					<p class="item-price">{{app.price}}</p>
 					<p class="item-desc">{{app.description}}</p>
 					<ul class="item-links">
+					{% if user_id == restaurant.user_id or user_id == 2 %}
 						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=app.id) }}">Edit</a></li>
 						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=app.id) }}">Delete</a></li>
+					{% endif %}
 					</ul>
 				</div>
 				{% endfor %}
@@ -143,8 +145,10 @@
 					<p class="item-price">{{entree.price}}</p>
 					<p class="item-desc">{{entree.description}}</p>
 					<ul class="item-links">
+					{% if user_id == restaurant.user_id or user_id == 2 %}
 						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=entree.id) }}">Edit</a></li>
 						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=entree.id) }}">Delete</a></li>
+					{% endif %}
 					</ul>
 				</div>
 				{% endfor %}
@@ -161,8 +165,10 @@
 					<p class="item-price">{{dessert.price}}</p>
 					<p class="item-desc">{{dessert.description}}</p>
 					<ul class="item-links">
+					{% if user_id == restaurant.user_id or user_id == 2 %}
 						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=dessert.id) }}">Edit</a></li>
 						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=dessert.id) }}">Delete</a></li>
+					{% endif %}
 					</ul>
 				</div>
 				{% endfor %}
@@ -179,8 +185,10 @@
 					<p class="item-price">{{bev.price}}</p>
 					<p class="item-desc">{{bev.description}}</p>
 					<ul class="item-links">
+					{% if user_id == restaurant.user_id or user_id == 2 %}
 						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=bev.id) }}">Edit</a></li>
 						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=bev.id) }}">Delete</a></li>
+					{% endif %}
 					</ul>
 				</div>
 				{% endfor %}
@@ -190,7 +198,9 @@
 		<p>There's nothing on this menu yet!</p>
 		{% endif %}
 		</div>
+		{% if user_id == restaurant.user_id or user_id == 2 %}
 		<p class="link"><a href="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}">Add a Menu Item</a></p>
+		{% endif %}
 	</section>
 </body>
 </html>
