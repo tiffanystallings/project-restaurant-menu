@@ -44,6 +44,7 @@
 					</script>
 				</span>
 			</p>
+
 		{% endif %}
 
 			<div id="signInButtons">
@@ -56,19 +57,19 @@
 					data-onfailure="onSignInFailure">
 				</span>
 			</div>
-			<div id="result">
-			</div>
 	
 			<script>
 				function onSignIn(googleUser) {
+					$('#signInButtons').attr('style', 'display: none');
+					{% if user == None %}
+					setTimeout(function(){
+						window.location.href = '/restaurants'
+					}, 1000);
 					
 					var auth = googleUser.getAuthResponse();
 					var id_token = auth.id_token;
 					console.log('Sign in successful.')
 
-					$('#signInButtons').attr('style', 'display: none');
-
-					{% if user == None %}
 					$.ajax({
 						type: 'POST',
 						url: '/gconnect?state={{STATE}}',
@@ -78,9 +79,6 @@
 						success: function(result) {
 							if (result) {
 								console.log('OK from server.');
-								setTimeout(function(){
-									window.location.href = '/restaurants'
-								}, 1000);
 							} else {
 								console.log('Error processing login');
 							}
@@ -93,7 +91,6 @@
 					$('#result').html('Sign in failed -- please try again.');
 				}
 			</script>
-
 		</div>
 		<!-- End User Authentication -->
 
