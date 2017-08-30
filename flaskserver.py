@@ -352,11 +352,11 @@ def gconnect():
 	"""
 
 	# Validate state token
-#	if request.args.get('state') != login_session['state']:
-#		response = make_response(json.dumps('Invalid state parameter'),
-#			401)
-#		response.headers['Content-Type'] = 'application/json'
-#		return response
+	if request.args.get('state') != login_session['state']:
+		response = make_response(json.dumps('Invalid state parameter'),
+			401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
 
 	# Obtain authorization code
 	id_token = request.data
