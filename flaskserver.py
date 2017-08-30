@@ -62,6 +62,7 @@ def newRestaurant():
 	login_session['state'] = state
 
 	user = login_session.get('username')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		newRest = Restaurant(
@@ -74,7 +75,7 @@ def newRestaurant():
 
 		return redirect(url_for('showRestaurants'))
 
-	return render_template('new_restaurant.html', STATE=state, user=user)
+	return render_template('new_restaurant.html', STATE=state, user=user, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/edit/',
@@ -89,6 +90,7 @@ def editRestaurant(restaurant_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		restaurant.name = request.form['name']
@@ -100,7 +102,7 @@ def editRestaurant(restaurant_id):
 		return redirect(url_for('showRestaurants'))
 
 	return render_template('edit_restaurant.html', restaurant=restaurant,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/delete/',
@@ -115,6 +117,7 @@ def deleteRestaurant(restaurant_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		session.delete(restaurant)
@@ -123,7 +126,7 @@ def deleteRestaurant(restaurant_id):
 
 		return redirect(url_for('showRestaurants'))
 	return render_template('delete_restaurant.html', restaurant=restaurant,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/')
@@ -147,10 +150,11 @@ def showMenuItems(restaurant_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 	
 	return render_template('menu.html', restaurant=restaurant,
 			items=items, apps=apps, entrees=entrees, desserts=desserts, bevs=bevs,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/new/',
@@ -165,6 +169,7 @@ def newMenuItem(restaurant_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		newItem = MenuItem(
@@ -184,7 +189,7 @@ def newMenuItem(restaurant_id):
 			restaurant_id = restaurant_id))
 
 	return render_template('new_item.html', restaurant=restaurant,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',
@@ -202,6 +207,7 @@ def editMenuItem(restaurant_id, menu_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		item.name = request.form['name']
@@ -217,7 +223,7 @@ def editMenuItem(restaurant_id, menu_id):
 			restaurant_id = restaurant_id))
 
 	return render_template('edit_item.html', restaurant=restaurant, item=item,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/',
@@ -235,6 +241,7 @@ def deleteMenuItem(restaurant_id, menu_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		session.delete(item)
@@ -245,7 +252,7 @@ def deleteMenuItem(restaurant_id, menu_id):
 			restaurant_id = restaurant_id))
 
 	return render_template('delete_item.html', item=item, restaurant=restaurant,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/JSON')
