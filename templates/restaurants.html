@@ -25,19 +25,22 @@
 					<a href="#" onclick="signOut();">Log Out</a>
 					<script>
 						function signOut() {
-							var auth2=gapi.auth2.getAuthInstance();
-							auth2.signOut().then(function() {
-								console.log('User signed out.');
-							})
+							var provider = '{{ provider }}'
+							if (provider == 'google') {
+								var auth2=gapi.auth2.getAuthInstance();
+								auth2.signOut().then(function() {
+									console.log('Google user signed out.');
+								})
+							};
 
 							$.ajax({
 								type: 'POST',
-								url: '/gdisconnect',
+								url: '/disconnect',
 								processData: false,
 								contentType: 'application/octet-stream; charset=utf-8',
 								success: function(result) {
 									if (result) {
-										window.location.href = "/restaurants";
+										window.location.href = "{{ url_for('showRestaurants') }}";
 									}
 								}
 							})

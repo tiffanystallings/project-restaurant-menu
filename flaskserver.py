@@ -48,9 +48,10 @@ def showRestaurants():
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	return render_template('restaurants.html', 
-		restaurants=restaurants, STATE=state, user=user, user_id=user_id)
+		restaurants=restaurants, STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/new', 
@@ -308,6 +309,7 @@ def fbconnect():
 	pic_data = json.loads(result)
 
 	# Store everything in the login session.
+	login_session['provider'] = 'facebook'
 	login_session['username'] = data["name"]
 	login_session['email'] = data["email"]
 	login_session['facebook_id'] = data["id"]
@@ -382,6 +384,7 @@ def gconnect():
 
 	# Login successful. Store access token for later use.
 	login_session['access_token'] = id_token
+	login_session['provider'] = 'google'
 	login_session['gplus_id'] = result['sub']
 	login_session['username'] = result['given_name']
 	login_session['picture'] = result['picture']
@@ -403,20 +406,43 @@ def gconnect():
 	response.headers['Content-Type'] = 'application/json'
 	return response
 
-@app.route('/fbdisconnect')
+
+@app.route('/disconnect', methods=['POST'])
+def disconnect():
+	if 'provider' in login_session:
+		if login_session['provider'] == 'google':
+			gDisconnect()
+			del login_session['gplus_id']
+
+		if login_session['provider'] == 'facebook':
+			fbDisconnect()
+			del login_session['facebook_id']
+
+		del login_session['username']
+		del login_session['email']
+		del login_session['picture']
+		del login_session['user_id']
+		del login_session['provider']
+
+		flash("You have successfully been logged out.")
+		return redirect(url_for('showRestaurants'))
+
+	else:
+		flash("Logout failed -- you weren't logged in.")
+		return redirect(url_for('showRestaurants'))
+
+@app.route('/fbdisconnect', methods=['POST'])
 def fbDisconnect():
 	facebook_id = login_session['facebook_id']
 	url = 'https://graph.facebook.com/%s/permissions' % facebook_id
 	h = httplib2.Http()
 	result = h.request(url, 'DELETE')[1]
 
-	del login_session['username']
-	del login_session['email']
-	del login_session['picture']
-	del login_session['user_id']
-	del login_session['facebook_id']
+	response = make_response(json.dumps('Successfully disconnected'),
+			200)
+	response.headers['Content-Type'] = 'application/json'
 
-	return "Log out successful!"
+	return response
 
 
 @app.route('/gdisconnect', methods=['POST'])
@@ -430,19 +456,10 @@ def gDisconnect():
 		response.headers['Content-Type'] = 'application/json'
 		return response
 
-	# Reset the user's session.
-	del login_session['access_token']
-	del login_session['gplus_id']
-	del login_session['username']
-	del login_session['picture']
-	del login_session['email']
-	del login_session['user_id']
-#
 	response = make_response(json.dumps('Successfully disconnected'),
 			200)
 	response.headers['Content-Type'] = 'application/json'
-#
-	flash('You are now logged out.')
+
 	return response
 
 
