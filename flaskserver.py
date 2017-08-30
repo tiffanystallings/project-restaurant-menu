@@ -50,9 +50,10 @@ def showRestaurants():
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	return render_template('restaurants.html', 
-		restaurants=restaurants, STATE=state, user=user, user_id=user_id)
+		restaurants=restaurants, STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/new', 
@@ -63,6 +64,7 @@ def newRestaurant():
 	login_session['state'] = state
 
 	user = login_session.get('username')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		newRest = Restaurant(
@@ -75,7 +77,7 @@ def newRestaurant():
 
 		return redirect(url_for('showRestaurants'))
 
-	return render_template('new_restaurant.html', STATE=state, user=user)
+	return render_template('new_restaurant.html', STATE=state, user=user, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/edit/',
@@ -90,6 +92,7 @@ def editRestaurant(restaurant_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		restaurant.name = request.form['name']
@@ -101,7 +104,7 @@ def editRestaurant(restaurant_id):
 		return redirect(url_for('showRestaurants'))
 
 	return render_template('edit_restaurant.html', restaurant=restaurant,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/delete/',
@@ -116,6 +119,7 @@ def deleteRestaurant(restaurant_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		session.delete(restaurant)
@@ -124,7 +128,7 @@ def deleteRestaurant(restaurant_id):
 
 		return redirect(url_for('showRestaurants'))
 	return render_template('delete_restaurant.html', restaurant=restaurant,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/')
@@ -148,10 +152,11 @@ def showMenuItems(restaurant_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 	
 	return render_template('menu.html', restaurant=restaurant,
 			items=items, apps=apps, entrees=entrees, desserts=desserts, bevs=bevs,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/new/',
@@ -166,6 +171,7 @@ def newMenuItem(restaurant_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		newItem = MenuItem(
@@ -185,7 +191,7 @@ def newMenuItem(restaurant_id):
 			restaurant_id = restaurant_id))
 
 	return render_template('new_item.html', restaurant=restaurant,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',
@@ -203,6 +209,7 @@ def editMenuItem(restaurant_id, menu_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		item.name = request.form['name']
@@ -218,7 +225,7 @@ def editMenuItem(restaurant_id, menu_id):
 			restaurant_id = restaurant_id))
 
 	return render_template('edit_item.html', restaurant=restaurant, item=item,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/',
@@ -236,6 +243,7 @@ def deleteMenuItem(restaurant_id, menu_id):
 
 	user = login_session.get('username')
 	user_id = login_session.get('user_id')
+	provider = login_session.get('provider')
 
 	if request.method == 'POST':
 		session.delete(item)
@@ -246,7 +254,7 @@ def deleteMenuItem(restaurant_id, menu_id):
 			restaurant_id = restaurant_id))
 
 	return render_template('delete_item.html', item=item, restaurant=restaurant,
-			STATE=state, user=user, user_id=user_id)
+			STATE=state, user=user, user_id=user_id, provider=provider)
 
 
 @app.route('/restaurants/JSON')
@@ -273,6 +281,64 @@ def menuItemJSON(restaurant_id, menu_id):
 	item = session.query(MenuItem).filter_by(id=menu_id).one()
 
 	return jsonify(MenuItem=[item.serialize])
+
+@app.route('/fbconnect', methods=['POST'])
+def fbconnect():
+
+	# Validate state token.
+	if request.args.get('state') != login_session['state']:
+		response = make_response(json.dumps('Invalid state parameter'),
+			401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+
+	# Store access token and app information.
+	access_token = request.data
+	print "access token received %s" % access_token
+	app_id = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_id']
+	app_secret = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+
+	# Exchange token and client info long-term token
+	url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
+        app_id, app_secret, access_token)
+	h = httplib2.Http()
+	result = h.request(url, 'GET')[1]
+
+	# Extract token from result
+	token = result.split(',')[0].split(':')[1].replace('"', '')
+
+	# Use token to get user info from API
+	userinfo_url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
+	result = h.request(userinfo_url, 'GET')[1]
+	data = json.loads(result)
+
+	# Get user picture from Facebook
+	pic_url = 'https://graph.facebook.com/v2.8/%s/picture?redirect=0&height=200&width=200' % data["id"]
+	result = h.request(pic_url, 'GET')[1]
+	pic_data = json.loads(result)
+
+	# Store everything in the login session.
+	login_session['provider'] = 'facebook'
+	login_session['username'] = data["name"]
+	login_session['email'] = data["email"]
+	login_session['facebook_id'] = data["id"]
+	login_session['picture'] = pic_data["data"]["url"]
+
+	# Check if user is currently in database
+	user_id = getUserID(login_session['email'])
+
+	# If user is not in database, add user.
+	if user_id is None:
+		user_id = createUser(login_session)
+
+	# Store user id in login session.
+	login_session['user_id'] = user_id
+
+	# Send response to ajax
+	response = make_response(json.dumps('Login successful'),
+			200)
+	response.headers['Content-Type'] = 'application/json'
+	return response
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -327,6 +393,7 @@ def gconnect():
 
 	# Login successful. Store access token for later use.
 	login_session['access_token'] = id_token
+	login_session['provider'] = 'google'
 	login_session['gplus_id'] = result['sub']
 	login_session['username'] = result['given_name']
 	login_session['picture'] = result['picture']
@@ -342,9 +409,48 @@ def gconnect():
 	# Store user id in login session.
 	login_session['user_id'] = user_id
 
+	# Send response to ajax
 	response = make_response(json.dumps('Login successful'),
 			200)
 	response.headers['Content-Type'] = 'application/json'
+	return response
+
+
+@app.route('/disconnect', methods=['POST'])
+def disconnect():
+	if 'provider' in login_session:
+		if login_session['provider'] == 'google':
+			gDisconnect()
+			del login_session['gplus_id']
+
+		if login_session['provider'] == 'facebook':
+			fbDisconnect()
+			del login_session['facebook_id']
+
+		del login_session['username']
+		del login_session['email']
+		del login_session['picture']
+		del login_session['user_id']
+		del login_session['provider']
+
+		flash("You have successfully been logged out.")
+		return redirect(url_for('showRestaurants'))
+
+	else:
+		flash("Logout failed -- you weren't logged in.")
+		return redirect(url_for('showRestaurants'))
+
+@app.route('/fbdisconnect', methods=['POST'])
+def fbDisconnect():
+	facebook_id = login_session['facebook_id']
+	url = 'https://graph.facebook.com/%s/permissions' % facebook_id
+	h = httplib2.Http()
+	result = h.request(url, 'DELETE')[1]
+
+	response = make_response(json.dumps('Successfully disconnected'),
+			200)
+	response.headers['Content-Type'] = 'application/json'
+
 	return response
 
 
@@ -359,19 +465,10 @@ def gDisconnect():
 		response.headers['Content-Type'] = 'application/json'
 		return response
 
-	# Reset the user's session.
-	del login_session['access_token']
-	del login_session['gplus_id']
-	del login_session['username']
-	del login_session['picture']
-	del login_session['email']
-	del login_session['user_id']
-#
 	response = make_response(json.dumps('Successfully disconnected'),
 			200)
 	response.headers['Content-Type'] = 'application/json'
-#
-	flash('You are now logged out.')
+
 	return response
 
 

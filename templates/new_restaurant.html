@@ -25,14 +25,17 @@
 					<a href="#" onclick="signOut();">Log Out</a>
 					<script>
 						function signOut() {
-							var auth2=gapi.auth2.getAuthInstance();
-							auth2.signOut().then(function() {
-								console.log('User signed out.');
-							})
+							var provider = '{{ provider }}'
+							if (provider == 'google') {
+								var auth2=gapi.auth2.getAuthInstance();
+								auth2.signOut().then(function() {
+									console.log('Google user signed out.');
+								})
+							};
 
 							$.ajax({
 								type: 'POST',
-								url: '/gdisconnect',
+								url: '/disconnect',
 								processData: false,
 								contentType: 'application/octet-stream; charset=utf-8',
 								success: function(result) {
@@ -48,7 +51,75 @@
 
 		{% endif %}
 
+			<!-- Facebook Sign-In SDK-->
+			<script>
+				window.fbAsyncInit = function() {
+					FB.init({
+						appId      : '135608883717115',
+						cookie     : true,
+				 		xfbml      : true,
+						version    : 'v2.10'
+					});
+					FB.AppEvents.logPageView();   
+			  	};
+
+				(function(d, s, id){
+					var js, fjs = d.getElementsByTagName(s)[0];
+					if (d.getElementById(id)) {return;}
+					js = d.createElement(s); js.id = id;
+					js.src = "//connect.facebook.net/en_US/sdk.js";
+					fjs.parentNode.insertBefore(js, fjs);
+				}(document, 'script', 'facebook-jssdk'));
+
+				// Obtain Access Token and contact server.
+				function sendTokenToServer() {
+					$('#signInButtons').attr('style', 'display: none');
+					var access_token = FB.getAuthResponse()['accessToken'];
+					console.log(access_token);
+					console.log('Fetching info');
+					FB.api('/me', function(response) {
+						console.log(response.name + ' logged in.');
+
+						$.ajax({
+							type: 'POST',
+							url: '/fbconnect?state={{STATE}}',
+							processData: false,
+							data: access_token,
+							contentType: 'application/octet-stream; charset=utf-8',
+							success: function(result) {
+								if (result) {
+									console.log('OK from server.');
+									setTimeout(function() {
+										window.location.href = "{{ url_for('newRestaurant') }}";
+									}, 1000);
+								} else {
+									console.log('Failure to call server');
+								}
+							}
+						});
+					});
+				}
+			</script>
+			<!-- End Facebook Script -->
+
 			<div id="signInButtons">
+				{% if user != None %}
+				<script>
+					$('#signInButtons').attr('style', 'display: none');
+				</script>
+				{% endif %}
+				<!-- Facebook button -->
+				<span class="fb-login-button"
+					data-max-rows="1"
+					data-size="medium"
+					data-width="50px"
+					data-button-type="login_with"
+					data-scope="public_profile,email"
+					onlogin="sendTokenToServer()">
+					Sign in
+				</span>
+
+				<!-- Google Button -->
 				<span class="g-signin2"
 					data-scope="https://www.googleapis.com/auth/plus.login"
 					data-redirecturi="postmessage"
@@ -89,6 +160,7 @@
 				}
 
 				function onSignInFailure() {
+					$('#signInButtons').attr('style', 'display: none');
 					$('.login-bar').html('Sign in failed -- please try again.');
 					setTimeout(function(){
 						window.location.href = '/restaurants'
