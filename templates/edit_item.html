@@ -73,6 +73,7 @@
 
 				// Obtain Access Token and contact server.
 				function sendTokenToServer() {
+					$('#signInButtons').attr('style', 'display: none');
 					var access_token = FB.getAuthResponse()['accessToken'];
 					console.log(access_token);
 					console.log('Fetching info');
@@ -159,6 +160,7 @@
 				}
 
 				function onSignInFailure() {
+					$('#signInButtons').attr('style', 'display: none');
 					$('.login-bar').html('Sign in failed -- please try again.');
 					setTimeout(function(){
 						window.location.href = "{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=item.id) }}"
