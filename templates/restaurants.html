@@ -78,7 +78,6 @@
 					console.log('Fetching info');
 					FB.api('/me', function(response) {
 						console.log(response.name + ' logged in.');
-						$('#signInButtons').attr('style', 'display: none');
 
 						$.ajax({
 							type: 'POST',
@@ -101,8 +100,12 @@
 				}
 			</script>
 			<!-- End Facebook Script -->
-
 			<div id="signInButtons">
+				{% if user != None %}
+				<script>
+					$('#signInButtons').attr('style', 'display: none');
+				</script>
+				{% endif %}
 				<!-- Facebook button -->
 				<span class="fb-login-button"
 					data-max-rows="1"
@@ -124,10 +127,10 @@
 					data-onfailure="onSignInFailure">
 				</span>
 			</div>
+
 	
 			<script>
 				function onSignIn(googleUser) {
-					$('#signInButtons').attr('style', 'display: none');
 					{% if user == None %}
 					setTimeout(function(){
 						window.location.href = '/restaurants'
