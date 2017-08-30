@@ -48,6 +48,18 @@ hr {
 
 #signInButtons {
 	float: right;
+	width: 50%;
+	display: inline-flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+span {
+	padding: 0 5px 0 5px;
+}
+
+.fblogin {
+	height: 100%;
 }
 
 #result {
