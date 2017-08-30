@@ -55,7 +55,7 @@
 						appId      : '135608883717115',
 						cookie     : true,
 				 		xfbml      : true,
-						version    : 'v2.2'
+						version    : 'v2.10'
 					});
 					FB.AppEvents.logPageView();   
 			  	};
@@ -75,6 +75,7 @@
 					console.log('Fetching info');
 					FB.api('/me', function(response) {
 						console.log(response.name + ' logged in.');
+						$('#signInButtons').attr('style', 'display: none');
 
 						$.ajax({
 							type: 'POST',
