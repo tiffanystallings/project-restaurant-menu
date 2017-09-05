@@ -20,6 +20,7 @@ Preferred:
 
 ## Installation
 Using Git Bash:
+
 `$ git clone https://github.com/tiffanystallings/project-restaurant-menu.git`
 
 From a ZIP:
@@ -28,8 +29,45 @@ From a ZIP:
 **Download ZIP**.
 3. Open the ZIP and click **Extract All**. Select your preferred  folder and hit **Extract**.
 
-## Setup
-Working on it!
+## Setting up the Virtual Environment
+To re-create the environment in which this was built and run it locally, you will need Udacity's Full Stack Nanodegree VM. The VM is built with all of the requirements for this project, making usage a lot more simple.
+
+To install the VM, use Git Bash.
+
+`$ git clone https://github.com/tiffanystallings/project-restaurant-menu.git`
+
+With Vagrant and Oracle VirtualBox VM installed (see the "Preferred" section of Requirements above), use Git Bash to navigate to the "vagrant" folder inside the fullstack-nanodegree-vm repository.
+
+`$ cd fullstack-nanodegree-vm/vagrant`
+
+Clone the project-restaurant-menu repository here, but do not navigate to it.
+
+`$ git clone https://github.com/tiffanystallings/project-restaurant-menu.git`
+
+If Vagrant and VirtualBox are properly installed, and if your machine is configured for virtualization, you should be able to initialize a Vagrant virtual machine by entering:
+
+`$ vagrant up`
+
+It is normal for the first "vagrant up" to take a few minutes, as it is handling a number of installations. Once it has completed, you will be regain access of your command line. Enter:
+
+`$ vagrant ssh`
+
+If Vagrant was able to set up the virtual machine smoothly, you will be logged in to a virtual Ubuntu machine and have access to its command line. Now, navigate to the restaurant menu directory.
+
+`$ cd /vagrant/project-restaurant-menu`
+
+## Setting up the Database
+From either your Vagrant virtual machine or a machine configured with the above Requirements, navigate to the project directory and run:
+
+`$ python database_setup.py`
+
+This will initialize the database and create a restaurantmenuwithusers.db file in the root folder of the repository. To populate the database with fake restaurants, menus, and a dummy user run:
+
+`$ python database_create.py`
+
+This is optional, but highly recommended. The program is currently configured for the second user (first after the dummy user) to have moderator-like abilities. Unwanted restaurants can be easily removed from the database via the web page, if need be.
+
+Once the database is set up, the server can be run.
 
 ## Usage
 Working on it!
