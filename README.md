@@ -57,7 +57,7 @@ If Vagrant was able to set up the virtual machine smoothly, you will be logged i
 `$ cd /vagrant/project-restaurant-menu`
 
 ## Setting up the Database
-From either your Vagrant virtual machine or a machine configured with the above Requirements, navigate to the project directory and run:
+From either your Vagrant virtual machine or a machine configured with the above Requirements, and while in the project directory run:
 
 `$ python database_setup.py`
 
@@ -70,7 +70,17 @@ This is optional, but highly recommended. The program is currently configured fo
 Once the database is set up, the server can be run.
 
 ## Usage
-Working on it!
+After the database has been set up, you are ready to start the server. While still in the project directory, run:
+
+`$ python flaskserver.py`
+
+Open your preferred browser and go to [http://localhost:5000](http://localhost:5000). This should take you to the "Menupoly" landing page.
+
+Note: Sign in through Facebook and Google should work, but they depend on using the client secrets assigned to this program. Logging in will only work on software originating from either the live demo, or a localhost IP. It is highly recommended that you generate your own client secrets and implement them, as I reserve the right to strip access to mine should I find them being used nefariously.
+
+Assuming you ran database_create.py in the setup, upon logging in for the first time you will be given the ability to edit and delete any restaurant or menu item. If you want to see what the website looks like as another user, you will need to sign in with a Google or Facebook account using an alternate e-mail address.
+
+Once signed in you will have the ability to create new restaurants, edit the name of those restaurants, delete those restaurants, and do the same for menu items on those restaurants' pages. Users who are not on the Mod account (user ID 2) will only be able to edit and delete their own content, not the content of other users.
 
 ## Contributions
 This project was built as part of Udacity's Full Stack Web Developer Nanodegree. It would be in violation of the honor code for me to accept any direct contributions to the code.
