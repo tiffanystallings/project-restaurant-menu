@@ -34,7 +34,7 @@ To re-create the environment in which this was built and run it locally, you wil
 
 To install the VM, use Git Bash.
 
-`$ git clone https://github.com/tiffanystallings/project-restaurant-menu.git`
+`$ git clone https://github.com/udacity/fullstack-nanodegree-vm.git`
 
 With Vagrant and Oracle VirtualBox VM installed (see the "Preferred" section of Requirements above), use Git Bash to navigate to the "vagrant" folder inside the fullstack-nanodegree-vm repository.
 
@@ -65,7 +65,7 @@ This will initialize the database and create a restaurantmenuwithusers.db file i
 
 `$ python database_create.py`
 
-This is optional, but highly recommended. The program is currently configured for the second user (first after the dummy user) to have moderator-like abilities. Unwanted restaurants can be easily removed from the database via the web page, if need be.
+This is optional, but highly recommended. The program is currently configured for the second user (first after the dummy user) to have moderator-like abilities. Unwanted restaurants can be easily removed from the database via the web page, if need be. It will also allow you to see what the website looks like when restaurants have been added.
 
 Once the database is set up, the server can be run.
 
