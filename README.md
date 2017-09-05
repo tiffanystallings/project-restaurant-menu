@@ -7,7 +7,16 @@ Users can log in via Facebook or Google Plus. In order to add a restaurant, the 
 Check out the live demo [here](https://menupoly.herokuapp.com)!
 
 ## Requirements
-Working on it!
+* Python 2
+* Flask 0.12.2
+* SQL Alchemy 1.1.12
+* OAuth2Client 4.1.2
+* Requests 2.18.2
+
+Preferred:
+* [Udacity's Full Stack VM](https://github.com/udacity/fullstack-nanodegree-vm)
+* [Vagrant](https://www.vagrantup.com/downloads.html)
+* [Oracle VirtualBox VM](https://www.virtualbox.org/wiki/Downloads)
 
 ## Installation
 Using Git Bash:
@@ -24,3 +33,8 @@ Working on it!
 
 ## Usage
 Working on it!
+
+## Contributions
+This project was built as part of Udacity's Full Stack Web Developer Nanodegree. It would be in violation of the honor code for me to accept any direct contributions to the code.
+
+However, if you have any advice or suggestions on how I might improve the code, please feel free to take out an Issue on the project's [github](https://github.com/tiffanystallings/project-restaurant-menu).
