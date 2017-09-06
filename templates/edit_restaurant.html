@@ -194,17 +194,15 @@
 				<input type="submit" value="Edit">
 			</p>
 		</form>
-		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 
 		{% else %}
 		<p class="error">You are not authorized to edit this restaurant.</p>
-		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 		{% endif %}
 
 	{% else %}
 		<p class="error">You must be signed in to edit this restaurant.</p>
-		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 	{% endif %}
+		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 	</div>
 </body>
 </html>
