@@ -19,12 +19,14 @@
 		<!-- User Authentication -->
 		<div class="login-bar">
 		{% if user != None %}
+		<!-- If user is logged in, welcome them and offer a log out link -->
 			<p class="welcome">
 				Welcome, {{ user }}!
 				<span class="logout">
 					<a href="#" onclick="signOut();">Log Out</a>
 					<script>
 						function signOut() {
+							/* Check if provider is Google and if so, run the google sign out script*/
 							var provider = '{{ provider }}'
 							if (provider == 'google') {
 								var auth2=gapi.auth2.getAuthInstance();
@@ -34,11 +36,13 @@
 							};
 
 							$.ajax({
+								/* Send a post request to the disconnect route */
 								type: 'POST',
 								url: '/disconnect',
 								processData: false,
 								contentType: 'application/octet-stream; charset=utf-8',
 								success: function(result) {
+									/* On success, refresh */
 									if (result) {
 										window.location.href = "{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}";
 									}
@@ -81,12 +85,14 @@
 						console.log(response.name + ' logged in.');
 
 						$.ajax({
+							/* Send a post request to the fbconnect route */
 							type: 'POST',
 							url: '/fbconnect?state={{STATE}}',
 							processData: false,
 							data: access_token,
 							contentType: 'application/octet-stream; charset=utf-8',
 							success: function(result) {
+								/* On success, refresh page. Otherwise, log an error.*/
 								if (result) {
 									console.log('OK from server.');
 									setTimeout(function() {
@@ -103,6 +109,7 @@
 			<!-- End Facebook Script -->
 
 			<div id="signInButtons">
+			<!-- If user is logged in, hide login buttons. -->
 				{% if user != None %}
 				<script>
 					$('#signInButtons').attr('style', 'display: none');
@@ -132,6 +139,7 @@
 	
 			<script>
 				function onSignIn(googleUser) {
+					/* Google sign in script to get authorization token on login. On success, refresh. */
 					$('#signInButtons').attr('style', 'display: none');
 					{% if user == None %}
 					setTimeout(function(){
@@ -143,6 +151,7 @@
 					console.log('Sign in successful.')
 
 					$.ajax({
+						/* Send authorization token to gconnect route. */
 						type: 'POST',
 						url: '/gconnect?state={{STATE}}',
 						processData: false,
@@ -160,6 +169,7 @@
 				}
 
 				function onSignInFailure() {
+					/* If window is closed or sign in otherwise fails, Show error on login bar and refresh.*/
 					$('#signInButtons').attr('style', 'display: none');
 					$('.login-bar').html('Sign in failed -- please try again.');
 					setTimeout(function(){
@@ -186,6 +196,7 @@
 	
 	<div class="form">
 	{% if user != None %}
+		<!-- If user's ID matches the ID of the restaurant's creator or if the user has moderator ID (user_id == 2), show form. -->
 		{% if user_id == restaurant.user_id or user_id == 2 %}
 		<h2>Adding a New Menu Item to {{restaurant.name}}</h2>
 		<form action="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}" method="post">
@@ -204,11 +215,13 @@
 		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 
 		{% else %}
+		<!--User is not autherized to edit this item. -->
 		<p class="error">You are not authorized to add items to this restaurant.</p>
 		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 		{% endif %}
 
 	{% else %}
+		<!-- User is not logged in. -->
 		<p class="error">You must be logged in to add menu items.</p>
 		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 	{% endif %}
