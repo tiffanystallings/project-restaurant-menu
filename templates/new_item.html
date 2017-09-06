@@ -212,19 +212,18 @@
 			<textarea name="description" rows="2" cols="50"></textarea>
 			<p><input type='submit' value='Add'></p>
 		</form>
-		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 
 		{% else %}
 		<!--User is not autherized to edit this item. -->
 		<p class="error">You are not authorized to add items to this restaurant.</p>
-		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 		{% endif %}
 
 	{% else %}
 		<!-- User is not logged in. -->
 		<p class="error">You must be logged in to add menu items.</p>
-		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 	{% endif %}
+		<!-- Offer redirect to menu -->
+		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 	</div>
 </body>
 </html>
