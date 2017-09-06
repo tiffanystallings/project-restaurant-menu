@@ -122,17 +122,19 @@
 					data-button-type="login_with"
 					data-scope="public_profile,email"
 					onlogin="sendTokenToServer()">
-					Sign in
+					Sign in with Facebook
 				</span>
 
-				<!-- Google plus button -->
+				<!-- Google Button -->
 				<span class="g-signin2"
 					data-scope="https://www.googleapis.com/auth/plus.login"
 					data-redirecturi="postmessage"
 					data-accesstype="offline"
 					data-cookiepolicy="single_host_origin"
 					data-onsuccess="onSignIn"
-					data-onfailure="onSignInFailure">
+					data-onfailure="onSignInFailure"
+					data-longtitle="true"
+					data-height="30">
 				</span>
 			</div>
 	
