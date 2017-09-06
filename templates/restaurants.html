@@ -18,13 +18,18 @@
 	<header>
 		<!-- User Authentication -->
 		<div class="login-bar">
+		<!-- If a user is detected, welcome them -->
 		{% if user != None %}
 			<p class="welcome">
 				Welcome, {{ user }}!
+				<!-- Offer Log Out -->
 				<span class="logout">
 					<a href="#" onclick="signOut();">Log Out</a>
 					<script>
 						function signOut() {
+							/* Checks provider. If provider is 
+							Google, run the google sign out
+							script. */
 							var provider = '{{ provider }}'
 							if (provider == 'google') {
 								var auth2=gapi.auth2.getAuthInstance();
@@ -34,11 +39,14 @@
 							};
 
 							$.ajax({
+								/* Send a post to the disconnect
+								route */
 								type: 'POST',
 								url: '/disconnect',
 								processData: false,
 								contentType: 'application/octet-stream; charset=utf-8',
 								success: function(result) {
+									// Refresh on success
 									if (result) {
 										window.location.href = "{{ url_for('showRestaurants') }}";
 									}
@@ -50,7 +58,7 @@
 			</p>
 
 		{% endif %}
-
+		<!-- User is not signed in, show login buttons-->
 			<!-- Facebook Sign-In SDK-->
 			<script>
 				window.fbAsyncInit = function() {
@@ -81,12 +89,15 @@
 						console.log(response.name + ' logged in.');
 
 						$.ajax({
+							/* Send a post request to the
+							fbconnect route */
 							type: 'POST',
 							url: '/fbconnect?state={{STATE}}',
 							processData: false,
 							data: access_token,
 							contentType: 'application/octet-stream; charset=utf-8',
 							success: function(result) {
+								/* If response indicates success, refresh the page in 1 second. Else, send a notice of error to the console. */
 								if (result) {
 									console.log('OK from server.');
 									setTimeout(function() {
@@ -103,6 +114,7 @@
 			<!-- End Facebook Script -->
 
 			<div id="signInButtons">
+				<!-- If user is connected, hide the sign in buttons -->
 				{% if user != None %}
 				<script>
 					$('#signInButtons').attr('style', 'display: none');
@@ -133,6 +145,7 @@
 	
 			<script>
 				function onSignIn(googleUser) {
+					/* Google sign in script */
 					$('#signInButtons').attr('style', 'display: none');
 					{% if user == None %}
 					setTimeout(function(){
@@ -145,12 +158,14 @@
 					console.log('{{user_id}}');
 
 					$.ajax({
+						/* Send post request to server */
 						type: 'POST',
 						url: '/gconnect?state={{STATE}}',
 						processData: false,
 						contentType: 'application/octet-stream; charset=utf-8',
 						data: id_token,
 						success: function(result) {
+							/* Log success or failure */
 							if (result) {
 								console.log('OK from server.');
 							} else {
@@ -162,6 +177,7 @@
 				}
 
 				function onSignInFailure() {
+					/* If user closes the login window, or the login otherwise fails, show an error in the login bar and refresh */
 					$('#signInButtons').attr('style', 'display: none');
 					$('.login-bar').html('Sign in failed -- please try again.');
 					setTimeout(function(){
@@ -187,10 +203,13 @@
 	</header>
 
 	<section>
+		<!-- Check for restaurants in the database -->
 		{% if restaurants|length %}
+		<!-- List each restaurant -->
 		{% for restaurant in restaurants %}
 			<div class="restaurant">
 				<h2 class="rest-name"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}">{{restaurant.name}}</a></h2>
+				<!-- If the user is the user who created the restaurant or the moderator (user_id = 2), show edit and delete buttons -->
 				{% if user_id == restaurant.user_id or user_id == 2 %}
 				<ul class="rest-links">
 					<li><a href="{{ url_for('editRestaurant', restaurant_id=restaurant.id) }}">Edit</a></li>
@@ -199,6 +218,7 @@
 				{% endif %}
 			</div>
 		{% endfor %}
+		<!-- No restaurants in the database -->
 		{% else %}
 			<p>Looks like you haven't added any restaurants!</p>
 		{% endif %}
