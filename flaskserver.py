@@ -498,9 +498,9 @@ def fbconnect():
                                  'r').read())['web']['app_secret']
 
     # Exchange token and client info long-term token
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=' +
+    url = ('https://graph.facebook.com/oauth/access_token?grant_type=' +
     'fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
-        app_id, app_secret, access_token)
+        app_id, app_secret, access_token))
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
@@ -508,14 +508,14 @@ def fbconnect():
     token = result.split(',')[0].split(':')[1].replace('"', '')
 
     # Use token to get user info from API
-    userinfo_url = 'https://graph.facebook.com/v2.8/me?access_token=' +
-    '%s&fields=name,id,email' % token
+    userinfo_url = ('https://graph.facebook.com/v2.8/me?access_token=' +
+    '%s&fields=name,id,email' % token)
     result = h.request(userinfo_url, 'GET')[1]
     data = json.loads(result)
 
     # Get user picture from Facebook
-    pic_url = 'https://graph.facebook.com/v2.8/' +
-    '%s/picture?redirect=0&height=200&width=200' % data["id"]
+    pic_url = ('https://graph.facebook.com/v2.8/' +
+    '%s/picture?redirect=0&height=200&width=200' % data["id"])
     result = h.request(pic_url, 'GET')[1]
     pic_data = json.loads(result)
 
