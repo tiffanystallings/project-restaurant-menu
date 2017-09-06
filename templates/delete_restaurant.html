@@ -18,6 +18,7 @@
 	<header>
 		<!-- User Authentication -->
 		<div class="login-bar">
+		<!-- Check if user is logged in. If so, show a welcome message and offer a log out button. -->
 		{% if user != None %}
 			<p class="welcome">
 				Welcome, {{ user }}!
@@ -25,6 +26,7 @@
 					<a href="#" onclick="signOut();">Log Out</a>
 					<script>
 						function signOut() {
+							/* Check if provider is google and if so, run the google log out script. */
 							var provider = '{{ provider }}'
 							if (provider == 'google') {
 								var auth2=gapi.auth2.getAuthInstance();
@@ -34,11 +36,13 @@
 							};
 
 							$.ajax({
+								/* Send disconnect request to server. */
 								type: 'POST',
 								url: '/disconnect',
 								processData: false,
 								contentType: 'application/octet-stream; charset=utf-8',
 								success: function(result) {
+									/* On success, refresh page. */
 									if (result) {
 										window.location.href = "{{ url_for('deleteRestaurant', restaurant_id=restaurant.id) }}";
 									}
@@ -72,8 +76,8 @@
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
 
-				// Obtain Access Token and contact server.
 				function sendTokenToServer() {
+					/* Get access token from facebook */
 					$('#signInButtons').attr('style', 'display: none');
 					var access_token = FB.getAuthResponse()['accessToken'];
 					console.log(access_token);
@@ -82,12 +86,14 @@
 						console.log(response.name + ' logged in.');
 
 						$.ajax({
+							/* Send access token to server */
 							type: 'POST',
 							url: '/fbconnect?state={{STATE}}',
 							processData: false,
 							data: access_token,
 							contentType: 'application/octet-stream; charset=utf-8',
 							success: function(result) {
+								/* On ok from server, refresh page. Otherwise, log an error. */
 								if (result) {
 									console.log('OK from server.');
 									setTimeout(function() {
@@ -104,6 +110,7 @@
 			<!-- End Facebook Script -->
 			
 			<div id="signInButtons">
+				<!-- Only show sign in buttons if user is not logged in. -->
 				{% if user != None %}
 				<script>
 					$('#signInButtons').attr('style', 'display: none');
@@ -133,6 +140,7 @@
 	
 			<script>
 				function onSignIn(googleUser) {
+					/* Get authorization token from google */
 					$('#signInButtons').attr('style', 'display: none');
 					{% if user == None %}
 					setTimeout(function(){
@@ -144,12 +152,14 @@
 					console.log('Sign in successful.')
 
 					$.ajax({
+						/* Send token to server */
 						type: 'POST',
 						url: '/gconnect?state={{STATE}}',
 						processData: false,
 						contentType: 'application/octet-stream; charset=utf-8',
 						data: id_token,
 						success: function(result) {
+							/* Log success or error to the console.*/
 							if (result) {
 								console.log('OK from server.');
 							} else {
@@ -161,6 +171,7 @@
 				}
 
 				function onSignInFailure() {
+					/* On sign in failure, show an error in the login bar and refresh the page. */
 					$('#signInButtons').attr('style', 'display: none');
 					$('.login-bar').html('Sign in failed -- please try again.');
 					setTimeout(function(){
@@ -186,23 +197,24 @@
 	</header>
 	
 	<div class="form">
+	<!-- Only show form if user is logged in, or if user is either the restaurant's creator or the moderator account (user_id == 2) -->
 	{% if user != None %}
 		{% if user_id == restaurant.user_id or user_id == 2 %}
 		<h2>Are you sure you want to delete {{ restaurant.name }}?</h2>
 		<form action="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id) }}" method="post">
 			<p><input type="submit" value="Delete"></p>
 		</form>
-		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 
 		{% else %}
+		<!-- User ID does not match restaurant's user ID, or the moderator ID -->
 		<p class="error">You are not authorized to delete this restaurant.</p>
-		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 		{% endif %}
 
 	{% else %}
+		<!-- User is not logged in. -->
 		<p class="error">You must be signed in to delete this restaurant.</p>
-		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 	{% endif %}
+		<p class="cancel"><a href="{{ url_for('showRestaurants') }}">Cancel</a></p>
 	</div>
 </body>
 </html>
