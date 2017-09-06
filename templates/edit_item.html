@@ -19,12 +19,14 @@
 		<!-- User Authentication -->
 		<div class="login-bar">
 		{% if user != None %}
+		<!-- If user is logged in, show welcome and offer a log out button -->
 			<p class="welcome">
 				Welcome, {{ user }}!
 				<span class="logout">
 					<a href="#" onclick="signOut();">Log Out</a>
 					<script>
 						function signOut() {
+							/* Check if provider is google and if so, run google sign out script */
 							var provider = '{{ provider }}'
 							if (provider == 'google') {
 								var auth2=gapi.auth2.getAuthInstance();
@@ -34,11 +36,13 @@
 							};
 
 							$.ajax({
+								/* Send post to disconnect route on server */
 								type: 'POST',
 								url: '/disconnect',
 								processData: false,
 								contentType: 'application/octet-stream; charset=utf-8',
 								success: function(result) {
+									/* On response from server, refresh page. */
 									if (result) {
 										window.location.href = "{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=item.id) }}";
 									}
@@ -71,8 +75,8 @@
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
 
-				// Obtain Access Token and contact server.
 				function sendTokenToServer() {
+					/* Get facebook access token */
 					$('#signInButtons').attr('style', 'display: none');
 					var access_token = FB.getAuthResponse()['accessToken'];
 					console.log(access_token);
@@ -81,12 +85,14 @@
 						console.log(response.name + ' logged in.');
 
 						$.ajax({
+							/* Send access token to server */
 							type: 'POST',
 							url: '/fbconnect?state={{STATE}}',
 							processData: false,
 							data: access_token,
 							contentType: 'application/octet-stream; charset=utf-8',
 							success: function(result) {
+								/* On success from server, refresh page. Otherwise, log an error. */
 								if (result) {
 									console.log('OK from server.');
 									setTimeout(function() {
@@ -132,6 +138,7 @@
 	
 			<script>
 				function onSignIn(googleUser) {
+					/* Get authorization token from google */
 					$('#signInButtons').attr('style', 'display: none');
 					{% if user == None %}
 					setTimeout(function(){
@@ -143,12 +150,14 @@
 					console.log('Sign in successful.')
 
 					$.ajax({
+						/* Send authorization token to server */
 						type: 'POST',
 						url: '/gconnect?state={{STATE}}',
 						processData: false,
 						contentType: 'application/octet-stream; charset=utf-8',
 						data: id_token,
 						success: function(result) {
+							/* Log error or success to console */
 							if (result) {
 								console.log('OK from server.');
 							} else {
@@ -160,6 +169,7 @@
 				}
 
 				function onSignInFailure() {
+					/* On sign in failure, show an error in the login bar and refresh page. */
 					$('#signInButtons').attr('style', 'display: none');
 					$('.login-bar').html('Sign in failed -- please try again.');
 					setTimeout(function(){
@@ -186,6 +196,7 @@
 	
 	<div class="form">
 	{% if user != None %}
+	<!-- Check if user is logged in, or if user is the restaurants creator or a moderator account (user_id == 2). If True, show form. -->
 		{% if user_id == restaurant.user_id or user_id == 2 %}
 		<h2>Editing {{item.name}} At {{restaurant.name}}</h2>
 		<form action="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=item.id) }}" method="post">
@@ -209,17 +220,17 @@
 			<textarea name="description" rows="2" cols="50">{{item.description}}</textarea>
 			<p><input type='submit' value='Edit'></p>
 		</form>
-		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
-
 		{% else %}
+		<!-- User is not restaurant creator, or moderator -->
 		<p class="error">You are not authorized to edit this menu item.</p>
-		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 		{% endif %}
 
 	{% else %}
+		<!-- User is not logged in -->
 		<p class="error">You must be logged in to edit items.</p>
-		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 	{% endif %}
+		<!-- Offer redirect to menu page -->
+		<p class="cancel"><a href="{{ url_for('showMenuItems', restaurant_id=restaurant.id)}}">Cancel</a></p>
 	</div>
 </body>
 </html>
