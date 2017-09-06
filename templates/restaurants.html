@@ -90,7 +90,7 @@
 
 						$.ajax({
 							/* Send a post request to the
-							fbconnect route */
+							fbconnect route with access token. */
 							type: 'POST',
 							url: '/fbconnect?state={{STATE}}',
 							processData: false,
@@ -145,7 +145,7 @@
 	
 			<script>
 				function onSignIn(googleUser) {
-					/* Google sign in script */
+					/* Google sign in script. Gets authorization token and refreshes page on success. */
 					$('#signInButtons').attr('style', 'display: none');
 					{% if user == None %}
 					setTimeout(function(){
