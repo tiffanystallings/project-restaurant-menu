@@ -6,6 +6,7 @@ Users can log in via Facebook or Google Plus. In order to add a restaurant, the 
 
 Check out the live demo [here](https://menupoly.herokuapp.com)!
 
+
 ## Requirements
 * Python 2
 * Flask 0.12.2
@@ -18,6 +19,7 @@ Preferred:
 * [Vagrant](https://www.vagrantup.com/downloads.html)
 * [Oracle VirtualBox VM](https://www.virtualbox.org/wiki/Downloads)
 
+
 ## Installation
 Using Git Bash:
 
@@ -28,6 +30,7 @@ From a ZIP:
 2. Click the **Clone or Download** dropdown box and select  
 **Download ZIP**.
 3. Open the ZIP and click **Extract All**. Select your preferred  folder and hit **Extract**.
+
 
 ## Setting up the Virtual Environment
 To re-create the environment in which this was built and run it locally, you will need Udacity's Full Stack Nanodegree VM. The VM is built with all of the requirements for this project, making usage a lot more simple.
@@ -56,6 +59,7 @@ If Vagrant was able to set up the virtual machine smoothly, you will be logged i
 
 `$ cd /vagrant/project-restaurant-menu`
 
+
 ## Setting up the Database
 From either your Vagrant virtual machine or a machine configured with the above Requirements, and while in the project directory run:
 
@@ -69,6 +73,7 @@ This is optional, but highly recommended. The program is currently configured fo
 
 Once the database is set up, the server can be run.
 
+
 ## Usage
 After the database has been set up, you are ready to start the server. While still in the project directory, run:
 
@@ -81,6 +86,26 @@ Note: Sign in through Facebook and Google should work, but they depend on using 
 Assuming you ran database_create.py in the setup, upon logging in for the first time you will be given the ability to edit and delete any restaurant or menu item. If you want to see what the website looks like as another user, you will need to sign in with a Google or Facebook account using an alternate e-mail address.
 
 Once signed in you will have the ability to create new restaurants, edit the name of those restaurants, delete those restaurants, and do the same for menu items on those restaurants' pages. Users who are not on the Mod account (user ID 2) will only be able to edit and delete their own content, not the content of other users.
+
+## API Usage
+There are three different JSON endpoints that can be obtained by GET requests. The following endpoints access the API from http://localhost:5000
+
+A list of all restaurants in the database and their IDs:
+`http://localhost:5000/restaurants/JSON`
+
+All menu items at a specific RESTAURANT_ID:
+`http://localhost:5000/restaurants/[RESTAURANT_ID]/JSON`
+
+Details of a specific menu item by ITEM_ID and RESTAURANT_ID:
+`http://localhost:5000/restaurants/[RESTAURANT_ID]/[ITEM_ID]/JSON`
+
+
+You can also use these API endpoints from the live demo. For example:
+
+`http://menupoly.herokuapp.com/restaurants/JSON`
+`http://menupoly.herokuapp.com/restaurants/4/JSON`
+`http://menupoly.herokuapp.com/restaurants/4/21/JSON`
+
 
 ## Contributions
 This project was built as part of Udacity's Full Stack Web Developer Nanodegree. It would be in violation of the honor code for me to accept any direct contributions to the code.
