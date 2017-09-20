@@ -189,7 +189,7 @@ def newMenuItem(restaurant_id):
     # If a post request is received...
     if request.method == 'POST':
         # Create a new menu item based on form input
-        return createItem(request, login_session, restaurant_id)
+        return createItem(request, login_session, restaurant)
 
     # Return a page with a login/welcome bar and a form to add a
     # new menu item to the selected restaurant.

@@ -2,7 +2,13 @@
 
 """
 Crud functionality handlers for the restaurant menu
-application.
+application. Certain functions are protected by a login
+requirement, so no user by the object's creator can
+make changes.
+
+User ID 2 (the second user created on the server after
+the dummy user), acts as a Moderator and can edit any
+content as they see fit.
 """
 
 from sqlalchemy import create_engine
@@ -56,25 +62,27 @@ def createRest(request, login_session):
         return response
 
 
-def createItem(request, login_session, restaurant_id):
+def createItem(request, login_session, restaurant):
     """
     Takes request and login session objects and
-    a restaurant id integer as inputs
+    a restaurant object as inputs
     Checks for user login
     If user is not logged in, respond with an error
     Adds a menu item to the database
     Returns a redirect to the menu page
     """
 
-    # Check if user is logged in.
-    if login_session.get('user_id') is not None:
+    # Check if user is authorized.
+    if (restaurant.user_id == login_session['user_id'] or
+            login_session['user_id'] == 2):
         # If so, add the menu item.
         newItem = MenuItem(
             name=request.form['name'],
             course=request.form['course'],
             price=request.form['price'],
             description=request.form['description'],
-            restaurant_id=restaurant_id,
+            restaurant=restaurant,
+            restaurant_id=restaurant.id,
             user_id=login_session['user_id'])
 
         session.add(newItem)
@@ -83,7 +91,7 @@ def createItem(request, login_session, restaurant_id):
 
         # Redirect user to the menu page
         return redirect(url_for('showMenuItems',
-                                restaurant_id=restaurant_id))
+                                restaurant_id=restaurant.id))
 
     # User is not logged in. Send an error.
     else:
