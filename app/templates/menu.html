@@ -1,299 +1,102 @@
-<!DOCTYPE html>
-<html lang="en-us">
-<head>
-	<title>Menupoly</title>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-	<link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display" rel="stylesheet">
-	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+{% extends "base.html" %}
+{% block title %}{{restaurant.name}}{% endblock %}
 
-	<!-- Pre requisites for Google Sign In -->
-	<meta name="google-signin-client_id" content="6593651812-g6n1kkdkvnet3e1v3f10jnbleqkq6137.apps.googleusercontent.com">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
-  	</script>
-	<script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
-	</script>
-</head>
-
-<body>
-	<header>
-		<!-- User Authentication -->
-		<div class="login-bar">
-		{% if user != None %}
-		<!-- If user is logged in, welcome them and offer a sign out button -->
-			<p class="welcome">
-				Welcome, {{ user }}!
-				<span class="logout">
-					<a href="#" onclick="signOut();">Log Out</a>
-					<script>
-						function signOut() {
-							/* Log out button clicked, check for google provider. If google is provider, run google sign out script. */
-							var provider = '{{ provider }}'
-							if (provider == 'google') {
-								var auth2=gapi.auth2.getAuthInstance();
-								auth2.signOut().then(function() {
-									console.log('Google user signed out.');
-								})
-							};
-
-							$.ajax({
-								/* Send post request to disconnect route. */
-								type: 'POST',
-								url: '/disconnect',
-								processData: false,
-								contentType: 'application/octet-stream; charset=utf-8',
-								success: function(result) {
-									/* On success, redirect */
-									if (result) {
-										window.location.href = "{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}";
-									}
-								}
-							})
-						}
-					</script>
-				</span>
-			</p>
-
-		{% endif %}
-
-			<!-- Facebook Sign-In SDK-->
-			<script>
-				window.fbAsyncInit = function() {
-					FB.init({
-						appId      : '135608883717115',
-						cookie     : true,
-				 		xfbml      : true,
-						version    : 'v2.10'
-					});
-					FB.AppEvents.logPageView();   
-			  	};
-
-				(function(d, s, id){
-					var js, fjs = d.getElementsByTagName(s)[0];
-					if (d.getElementById(id)) {return;}
-					js = d.createElement(s); js.id = id;
-					js.src = "//connect.facebook.net/en_US/sdk.js";
-					fjs.parentNode.insertBefore(js, fjs);
-				}(document, 'script', 'facebook-jssdk'));
-
-				// Obtain Access Token and contact server.
-				function sendTokenToServer() {
-					/* Get access token from Facebook */
-					$('#signInButtons').attr('style', 'display: none');
-					var access_token = FB.getAuthResponse()['accessToken'];
-					console.log(access_token);
-					console.log('Fetching info');
-					FB.api('/me', function(response) {
-						console.log(response.name + ' logged in.');
-
-						$.ajax({
-							/* Send access token to server */
-							type: 'POST',
-							url: '/fbconnect?state={{STATE}}',
-							processData: false,
-							data: access_token,
-							contentType: 'application/octet-stream; charset=utf-8',
-							success: function(result) {
-								/* If server sends success, redirect user. Otherwise, log an error. */
-								if (result) {
-									console.log('OK from server.');
-									setTimeout(function() {
-										window.location.href = "{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}";
-									}, 1000);
-								} else {
-									console.log('Failure to call server');
-								}
-							}
-						});
-					});
-				}
-			</script>
-			<!-- End Facebook Script -->
-			<div id="signInButtons">
-				{% if user != None %}
-				<script>
-					$('#signInButtons').attr('style', 'display: none');
-				</script>
+{% block content %}
+	<div class="menu">
+	<h2 class="rest-name">{{restaurant.name}}</h2>
+	<!-- Check if restaurant has menu items -->
+	{% if items['total'] > 0 %}
+		<!-- If ther are any appetizers, list them -->
+		{% if items['apps']|length %}
+		<div class="course">
+			<h3 class="course-head">Appetizers</h3>
+			<hr>
+			{% for app in items['apps'] %}
+			<div class="menu-item">
+				<h4 class="item-name">{{app.name}}</h4>
+				<p class="item-price">{{app.price}}</p>
+				<p class="item-desc">{{app.description}}</p>
+				<ul class="item-links">
+				<!-- Only show edit or delete buttons to the user who created the restaurant, or the Mod user (user_id == 2) -->
+				{% if user_id == restaurant.user_id or user_id == 2 %}
+					<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=app.id) }}">Edit</a></li>
+					<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=app.id) }}">Delete</a></li>
 				{% endif %}
-				<!-- Facebook button -->
-				<span class="fb-login-button"
-					data-max-rows="1"
-					data-size="medium"
-					data-width="50px"
-					data-button-type="login_with"
-					data-scope="public_profile,email"
-					onlogin="sendTokenToServer()">
-					Sign in with Facebook
-				</span>
-
-				<!-- Google Button -->
-				<span class="g-signin2"
-					data-scope="https://www.googleapis.com/auth/plus.login"
-					data-redirecturi="postmessage"
-					data-accesstype="offline"
-					data-cookiepolicy="single_host_origin"
-					data-onsuccess="onSignIn"
-					data-onfailure="onSignInFailure"
-					data-longtitle="true"
-					data-height="30">
-				</span>
+				</ul>
 			</div>
-	
-			<script>
-				function onSignIn(googleUser) {
-					/* Hide sign in buttons while login processes, get authorization token from Google */
-					$('#signInButtons').attr('style', 'display: none');
-					{% if user == None %}
-					setTimeout(function(){
-						window.location.href = "{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}"
-					}, 1000);
-					
-					var auth = googleUser.getAuthResponse();
-					var id_token = auth.id_token;
-					console.log('Sign in successful.')
-
-					$.ajax({
-						/* Send authorization token to server */
-						type: 'POST',
-						url: '/gconnect?state={{STATE}}',
-						processData: false,
-						contentType: 'application/octet-stream; charset=utf-8',
-						data: id_token,
-						success: function(result) {
-							/* Log response from server. */
-							if (result) {
-								console.log('OK from server.');
-							} else {
-								console.log('Error processing login');
-							}
-						}
-					})
-					{% endif %}
-				}
-
-				function onSignInFailure() {
-					/* Login failed -- show an error message on the login bar and refresh. */
-					$('#signInButtons').attr('style', 'display: none');
-					$('.login-bar').html('Sign in failed -- please try again.');
-					setTimeout(function(){
-						window.location.href = "{{ url_for('showMenuItems', restaurant_id=restaurant.id) }}"
-					}, 1000);
-				}
-			</script>
-		</div>
-		<!-- End User Authentication -->
-
-		<!-- Title and Message Flashing -->
-		<h1 class="main-head"><a href ="{{ url_for('showRestaurants') }}">Menupoly</a></h1>
-		{%  with messages = get_flashed_messages() %}
-		{%  if messages %}
-			<ul class="flash">
-			{% for message in messages %}
-				<li><strong>{{ message }}</strong></li>
 			{% endfor %}
-			</ul>
-		{% endif %}
-		{% endwith %}
-		<!-- End Title and Message Flashing -->
-	</header>
-	
-	<section>
-		<div class="menu">
-		<h2 class="rest-name">{{restaurant.name}}</h2>
-		<!-- Check if restaurant has menu items -->
-		{% if items['total'] > 0 %}
-			<!-- If ther are any appetizers, list them -->
-			{% if items['apps']|length %}
-			<div class="course">
-				<h3 class="course-head">Appetizers</h3>
-				<hr>
-				{% for app in items['apps'] %}
-				<div class="menu-item">
-					<h4 class="item-name">{{app.name}}</h4>
-					<p class="item-price">{{app.price}}</p>
-					<p class="item-desc">{{app.description}}</p>
-					<ul class="item-links">
-					<!-- Only show edit or delete buttons to the user who created the restaurant, or the Mod user (user_id == 2) -->
-					{% if user_id == restaurant.user_id or user_id == 2 %}
-						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=app.id) }}">Edit</a></li>
-						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=app.id) }}">Delete</a></li>
-					{% endif %}
-					</ul>
-				</div>
-				{% endfor %}
-			</div>
-			{% endif %}
-			<!-- If there are any entrees, list them -->
-			{% if items['entrees']|length %}
-			<div class="course">
-				<h3 class="course-head">Entrees</h3>
-				<hr>
-				{% for entree in items['entrees'] %}
-				<div class="menu-item">
-					<h4 class="item-name">{{entree.name}}</h4>
-					<p class="item-price">{{entree.price}}</p>
-					<p class="item-desc">{{entree.description}}</p>
-					<ul class="item-links">
-					<!-- Only show edit and delete buttons to the restaurant's creater or the moderator -->
-					{% if user_id == restaurant.user_id or user_id == 2 %}
-						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=entree.id) }}">Edit</a></li>
-						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=entree.id) }}">Delete</a></li>
-					{% endif %}
-					</ul>
-				</div>
-				{% endfor %}
-			</div>
-			{% endif %}
-			<!-- If there are any desserts, list them. -->
-			{% if items['desserts']|length %}
-			<div class="course">
-				<h3 class="course-head">Desserts</h3>
-				<hr>
-				{% for dessert in items['desserts'] %}
-				<div class="menu-item">
-					<h4 class="item-name">{{dessert.name}}</h4>
-					<p class="item-price">{{dessert.price}}</p>
-					<p class="item-desc">{{dessert.description}}</p>
-					<ul class="item-links">
-					<!-- Only show edit and delete buttons to the restaurant's creator and to the moderator -->
-					{% if user_id == restaurant.user_id or user_id == 2 %}
-						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=dessert.id) }}">Edit</a></li>
-						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=dessert.id) }}">Delete</a></li>
-					{% endif %}
-					</ul>
-				</div>
-				{% endfor %}
-			</div>
-			{% endif %}
-			<!-- If there are any beverages, list them -->
-			{% if items['bevs']|length %}
-			<div class="course">
-				<h3 class="course-head">Beverages</h3>
-				<hr>
-				{% for bev in items['bevs'] %}
-				<div class="menu-item">
-					<h4 class="item-name">{{bev.name}}</h4>
-					<p class="item-price">{{bev.price}}</p>
-					<p class="item-desc">{{bev.description}}</p>
-					<ul class="item-links">
-					<!-- Only show edit and delete buttons to the restaurant's creator, or the moderator. -->
-					{% if user_id == restaurant.user_id or user_id == 2 %}
-						<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=bev.id) }}">Edit</a></li>
-						<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=bev.id) }}">Delete</a></li>
-					{% endif %}
-					</ul>
-				</div>
-				{% endfor %}
-			</div>
-			{% endif %}
-		{% else %}
-		<!-- No menu items added -->
-		<p>There's nothing on this menu yet!</p>
-		{% endif %}
 		</div>
-		<!-- Only show the link to add new menu items to the restaurant's creator, or the moderator. -->
-		{% if user_id == restaurant.user_id or user_id == 2 %}
-		<p class="link"><a href="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}">Add a Menu Item</a></p>
 		{% endif %}
-	</section>
-</body>
-</html>
+		<!-- If there are any entrees, list them -->
+		{% if items['entrees']|length %}
+		<div class="course">
+			<h3 class="course-head">Entrees</h3>
+			<hr>
+			{% for entree in items['entrees'] %}
+			<div class="menu-item">
+				<h4 class="item-name">{{entree.name}}</h4>
+				<p class="item-price">{{entree.price}}</p>
+				<p class="item-desc">{{entree.description}}</p>
+				<ul class="item-links">
+				<!-- Only show edit and delete buttons to the restaurant's creater or the moderator -->
+				{% if user_id == restaurant.user_id or user_id == 2 %}
+					<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=entree.id) }}">Edit</a></li>
+					<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=entree.id) }}">Delete</a></li>
+				{% endif %}
+				</ul>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+		<!-- If there are any desserts, list them. -->
+		{% if items['desserts']|length %}
+		<div class="course">
+			<h3 class="course-head">Desserts</h3>
+			<hr>
+			{% for dessert in items['desserts'] %}
+			<div class="menu-item">
+				<h4 class="item-name">{{dessert.name}}</h4>
+				<p class="item-price">{{dessert.price}}</p>
+				<p class="item-desc">{{dessert.description}}</p>
+				<ul class="item-links">
+				<!-- Only show edit and delete buttons to the restaurant's creator and to the moderator -->
+				{% if user_id == restaurant.user_id or user_id == 2 %}
+					<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=dessert.id) }}">Edit</a></li>
+					<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=dessert.id) }}">Delete</a></li>
+				{% endif %}
+				</ul>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+		<!-- If there are any beverages, list them -->
+		{% if items['bevs']|length %}
+		<div class="course">
+			<h3 class="course-head">Beverages</h3>
+			<hr>
+			{% for bev in items['bevs'] %}
+			<div class="menu-item">
+				<h4 class="item-name">{{bev.name}}</h4>
+				<p class="item-price">{{bev.price}}</p>
+				<p class="item-desc">{{bev.description}}</p>
+				<ul class="item-links">
+				<!-- Only show edit and delete buttons to the restaurant's creator, or the moderator. -->
+				{% if user_id == restaurant.user_id or user_id == 2 %}
+					<li><a href="{{ url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=bev.id) }}">Edit</a></li>
+					<li><a href="{{ url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=bev.id) }}">Delete</a></li>
+				{% endif %}
+				</ul>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+	{% else %}
+	<!-- No menu items added -->
+	<p>There's nothing on this menu yet!</p>
+	{% endif %}
+	</div>
+	<!-- Only show the link to add new menu items to the restaurant's creator, or the moderator. -->
+	{% if user_id == restaurant.user_id or user_id == 2 %}
+	<p class="link"><a href="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}">Add a Menu Item</a></p>
+	{% endif %}
+{% endblock %}
