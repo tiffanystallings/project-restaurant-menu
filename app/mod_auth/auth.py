@@ -1,6 +1,9 @@
 # /app/mod-auth/auth.py
-#
-# Restaurant Menu Project
+
+"""
+Authentication handlers for the restaurant menu application.
+"""
+
 from flask import make_response
 from flask import flash
 from flask import redirect
@@ -15,7 +18,7 @@ from .userhandlers import *
 
 # Load Google OAuth client information.
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('secrets/client_secrets.json', 'r').read())['web']['client_id']
 
 
 def fbauth(request, login_session):

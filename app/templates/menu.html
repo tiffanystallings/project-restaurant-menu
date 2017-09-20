@@ -200,13 +200,13 @@
 		<div class="menu">
 		<h2 class="rest-name">{{restaurant.name}}</h2>
 		<!-- Check if restaurant has menu items -->
-		{% if items|length %}
+		{% if items['total'] > 0 %}
 			<!-- If ther are any appetizers, list them -->
-			{% if apps|length %}
+			{% if items['apps']|length %}
 			<div class="course">
 				<h3 class="course-head">Appetizers</h3>
 				<hr>
-				{% for app in apps %}
+				{% for app in items['apps'] %}
 				<div class="menu-item">
 					<h4 class="item-name">{{app.name}}</h4>
 					<p class="item-price">{{app.price}}</p>
@@ -223,11 +223,11 @@
 			</div>
 			{% endif %}
 			<!-- If there are any entrees, list them -->
-			{% if entrees|length %}
+			{% if items['entrees']|length %}
 			<div class="course">
 				<h3 class="course-head">Entrees</h3>
 				<hr>
-				{% for entree in entrees %}
+				{% for entree in items['entrees'] %}
 				<div class="menu-item">
 					<h4 class="item-name">{{entree.name}}</h4>
 					<p class="item-price">{{entree.price}}</p>
@@ -244,11 +244,11 @@
 			</div>
 			{% endif %}
 			<!-- If there are any desserts, list them. -->
-			{% if desserts|length %}
+			{% if items['desserts']|length %}
 			<div class="course">
 				<h3 class="course-head">Desserts</h3>
 				<hr>
-				{% for dessert in desserts %}
+				{% for dessert in items['desserts'] %}
 				<div class="menu-item">
 					<h4 class="item-name">{{dessert.name}}</h4>
 					<p class="item-price">{{dessert.price}}</p>
@@ -265,11 +265,11 @@
 			</div>
 			{% endif %}
 			<!-- If there are any beverages, list them -->
-			{% if bevs|length %}
+			{% if items['bevs']|length %}
 			<div class="course">
 				<h3 class="course-head">Beverages</h3>
 				<hr>
-				{% for bev in bevs %}
+				{% for bev in items['bevs'] %}
 				<div class="menu-item">
 					<h4 class="item-name">{{bev.name}}</h4>
 					<p class="item-price">{{bev.price}}</p>

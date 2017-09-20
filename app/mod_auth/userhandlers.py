@@ -1,8 +1,8 @@
 # /app/mod-auth/userhandlers.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import User
-from database_setup import Base
+from models import User
+from models import Base
 
 
 engine = create_engine('sqlite:///restaurantmenuwithusers.db')

@@ -13,44 +13,19 @@ on the database.
 from flask import Flask
 from flask import render_template
 from flask import request
-from flask import redirect
-from flask import url_for
-from flask import flash
 from flask import jsonify
-from flask import make_response
 from flask import session as login_session
 
-# SQL Alchemy Imports
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-# Imports from local database_setup.py file
-from database_setup import Base
-from database_setup import User
-from database_setup import Restaurant
-from database_setup import MenuItem
-
 # Python core module imports
-import json
-import httplib2
 import os
-
-# Requests import
-import requests
 
 # Local module imports
 from mod_auth import *
+from mod_crud import *
 
 
 # Set up Flask for routing
 app = Flask(__name__)
-
-# Prep the SQL server
-engine = create_engine('sqlite:///restaurantmenuwithusers.db')
-Base.metadata.bind = engine
-
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
 
 
 # Inject user info into all templates.
@@ -75,7 +50,7 @@ def showRestaurants():
     """
 
     # Get all restaurants.
-    restaurants = session.query(Restaurant).all()
+    restaurants = readRest()
 
     # Store a state token
     state = makeState(login_session)
@@ -101,20 +76,9 @@ def newRestaurant():
     # Create and store a state token.
     state = makeState(login_session)
 
-    # If a post request is received...
     if request.method == 'POST':
-        # Create a new restaurant in the database.
-        newRest = Restaurant(name=request.form['name'],
-                             user_id=login_session['user_id'])
-
-        session.add(newRest)
-        session.commit()
-        flash('Restaurant created successfully!')
-
-        # Return to restaurants page.
-        return redirect(url_for('showRestaurants'))
-
-    # Get template and pass in user info
+        return createRest(request, login_session)
+        
     return render_template('new_restaurant.html', STATE=state)
 
 
@@ -133,24 +97,15 @@ def editRestaurant(restaurant_id):
     """
 
     # Get restaurant from database by ID
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    restaurant = readRest(restaurant_id=restaurant_id)
 
     # Generate and store a state token
     state = makeState(login_session)
 
     # If a post request is received...
     if request.method == 'POST':
-        # Change the restaurant's name according to the form submission
-        restaurant.name = request.form['name']
+        return updateRest(request, login_session, restaurant)
 
-        session.add(restaurant)
-        session.commit()
-        flash('Restaurant edited successfully!')
-
-        # Redirect user to landing page.
-        return redirect(url_for('showRestaurants'))
-
-    # Pass in user info for login bar, and restaurant info for form template
     return render_template('edit_restaurant.html', restaurant=restaurant,
                            STATE=state)
 
@@ -169,7 +124,7 @@ def deleteRestaurant(restaurant_id):
     """
 
     # Get restaurant by ID
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    restaurant = readRest(restaurant_id=restaurant_id)
 
     # Generate and store a state token
     state = makeState(login_session)
@@ -177,12 +132,7 @@ def deleteRestaurant(restaurant_id):
     # If a post request is received...
     if request.method == 'POST':
         # Delete restaurant from the database
-        session.delete(restaurant)
-        session.commit()
-        flash('Restaurant deleted successfully!')
-
-        # Redirect user to landing page
-        return redirect(url_for('showRestaurants'))
+        return deleteRest(login_session, restaurant)
 
     # Get template for deleting restaurant, pass in restaurant and user info
     return render_template('delete_restaurant.html', restaurant=restaurant,
@@ -203,22 +153,10 @@ def showMenuItems(restaurant_id):
     """
 
     # Get restaurant by id
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    restaurant = readRest(restaurant_id=restaurant_id)
 
-    # Get menu items by id (used to check if a restaurant has added any menu
-    # items yet inside the template.)
-    items = session.query(MenuItem).filter_by(
-        restaurant_id=restaurant.id).all()
-
-    # Get menu items by restaurant ID and by course.
-    apps = session.query(MenuItem).filter_by(
-        restaurant_id=restaurant.id, course='Appetizer').all()
-    entrees = session.query(MenuItem).filter_by(
-        restaurant_id=restaurant.id, course='Entree').all()
-    desserts = session.query(MenuItem).filter_by(
-        restaurant_id=restaurant.id, course='Dessert').all()
-    bevs = session.query(MenuItem).filter_by(
-        restaurant_id=restaurant.id, course='Beverage').all()
+    # Get menu items by restaurant ID
+    items = readMenu(restaurant_id=restaurant_id)
 
     # Generate and store a state token.
     state = makeState(login_session)
@@ -226,8 +164,7 @@ def showMenuItems(restaurant_id):
     # Return menu template with login/welcome bar and lists all menu items of
     # a restaurant, divided by course.
     return render_template('menu.html', restaurant=restaurant,
-                           items=items, apps=apps, entrees=entrees,
-                           desserts=desserts, bevs=bevs, STATE=state)
+                           items=items, STATE=state)
 
 
 # Route for adding a new menu item
@@ -237,16 +174,14 @@ def newMenuItem(restaurant_id):
     """
     Takes a restaurant id (int) as input.
     Gets a restaurant by id.
-    Stores a state token for potential login.
-    Checks for user info to welcome user.
+    Stores a state token for potential login.\
     Accepts post requests that add a menu item to the selected restaurant.
     Outputs a template with a login/welcome bar and a form for adding
     a new menu item to a restaurant.
     """
 
     # Get a restaurant by ID
-    restaurant = session.query(Restaurant).filter_by(
-        id=restaurant_id).one()
+    restaurant = readRest(restaurant_id=restaurant_id)
 
     # Generate a state token and store it
     state = makeState(login_session)
@@ -254,22 +189,7 @@ def newMenuItem(restaurant_id):
     # If a post request is received...
     if request.method == 'POST':
         # Create a new menu item based on form input
-        newItem = MenuItem(
-            name=request.form['name'],
-            course=request.form['course'],
-            price=request.form['price'],
-            description=request.form['description'],
-            restaurant=restaurant,
-            restaurant_id=restaurant_id,
-            user_id=restaurant.user_id)
-
-        session.add(newItem)
-        session.commit()
-        flash('New menu item created!')
-
-        # Redirect user to the menu page
-        return redirect(url_for('showMenuItems',
-                                restaurant_id=restaurant_id))
+        return createItem(request, login_session, restaurant_id)
 
     # Return a page with a login/welcome bar and a form to add a
     # new menu item to the selected restaurant.
@@ -292,8 +212,8 @@ def editMenuItem(restaurant_id, menu_id):
     """
 
     # Get restaurant and menu item by ID.
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    item = session.query(MenuItem).filter_by(id=menu_id).one()
+    restaurant = readRest(restaurant_id=restaurant_id)
+    item = readMenu(menu_id=menu_id)
 
     # Generate and store a state token
     state = makeState(login_session)
@@ -301,18 +221,7 @@ def editMenuItem(restaurant_id, menu_id):
     # If a post request is received...
     if request.method == 'POST':
         # Update selected menu item based on form inputs
-        item.name = request.form['name']
-        item.course = request.form['course']
-        item.price = request.form['price']
-        item.description = request.form['description']
-
-        session.add(item)
-        session.commit()
-        flash('Menu item edited successfully!')
-
-        # Redirect user to menu page
-        return redirect(url_for('showMenuItems',
-                                restaurant_id=restaurant_id))
+        return updateItem(request, login_session, item)
 
     # Return a page with a login/welcome bar and a form for editing the
     # selected menu item.
@@ -335,8 +244,8 @@ def deleteMenuItem(restaurant_id, menu_id):
     """
 
     # Get restaurant and menu item by IDs
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    item = session.query(MenuItem).filter_by(id=menu_id).one()
+    restaurant = readRest(restaurant_id=restaurant_id)
+    item = readMenu(menu_id=menu_id)
 
     # Generate and store a state token
     state = makeState(login_session)
@@ -344,13 +253,7 @@ def deleteMenuItem(restaurant_id, menu_id):
     # If a post request is received...
     if request.method == 'POST':
         # Delete the selected menu item
-        session.delete(item)
-        session.commit()
-        flash('Menu item deleted successfully!')
-
-        # Redirect user to the menu page
-        return redirect(url_for('showMenuItems',
-                                restaurant_id=restaurant_id))
+        return deleteItem(login_session, item)
 
     # Return a page with a login/welcome bar and a form for deleting the
     # selected menu item.
@@ -368,7 +271,7 @@ def restaurantsJSON():
     """
 
     # Get all restaurants
-    restaurants = session.query(Restaurant).all()
+    restaurants = readRest()
 
     # Return a JSON object by iterating through the restaurants object
     return jsonify(Restaurants=[i.serialize for i in restaurants])
@@ -383,10 +286,8 @@ def restaurantMenuJSON(restaurant_id):
     Outputs a JSON of all menu items at selected restaurant.
     """
 
-    # Get restaurant by ID, get menu items by restaurant id.
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    items = session.query(MenuItem).filter_by(
-        restaurant_id=restaurant_id).all()
+    # Get menu items by restaurant id.
+    items = readMenu(restaurant_id=restaurant_id, combined=True)
 
     # Return a JSON by iterating though items
     return jsonify(MenuItems=[i.serialize for i in items])
@@ -401,10 +302,8 @@ def menuItemJSON(restaurant_id, menu_id):
     Outputs a JSON of the details of the selected menu item
     """
 
-    # Get restaurant and menu item by id
-    restaurant = session.query(Restaurant).filter_by(
-        id=restaurant_id).one()
-    item = session.query(MenuItem).filter_by(id=menu_id).one()
+    # Get remenu item by id
+    item = readMenu(menu_id=menu_id)
 
     # Return a JSON of the menu item details
     return jsonify(MenuItem=[item.serialize])
