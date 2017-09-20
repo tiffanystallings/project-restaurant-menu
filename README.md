@@ -7,7 +7,17 @@ Users can log in via Facebook or Google Plus. In order to add a restaurant, the 
 Check out the live demo [here](https://menupoly.herokuapp.com)!
 
 
-## Requirements
+## Contents
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Setting up the Virtual Environment](#virtual-env)
+4. [Setting up the Database](#database)
+5. [Usage](#usage)
+6. [API Usage](#api)
+7. [Contriburtions](#contributions)
+
+
+## Requirements <a name="requirements" />
 * Python 2
 * Flask 0.12.2
 * SQL Alchemy 1.1.12
@@ -20,7 +30,7 @@ Preferred:
 * [Oracle VirtualBox VM](https://www.virtualbox.org/wiki/Downloads)
 
 
-## Installation
+## Installation <a name="installation" />
 Using Git Bash:
 
 `$ git clone https://github.com/tiffanystallings/project-restaurant-menu.git`
@@ -32,7 +42,7 @@ From a ZIP:
 3. Open the ZIP and click **Extract All**. Select your preferred  folder and hit **Extract**.
 
 
-## Setting up the Virtual Environment
+## Setting up the Virtual Environment <a name="virtual-env" />
 To re-create the environment in which this was built and run it locally, you will need Udacity's Full Stack Nanodegree VM. The VM is built with all of the requirements for this project, making usage a lot more simple.
 
 To install the VM, use Git Bash.
@@ -57,13 +67,13 @@ It is normal for the first "vagrant up" to take a few minutes, as it is handling
 
 If Vagrant was able to set up the virtual machine smoothly, you will be logged in to a virtual Ubuntu machine and have access to its command line. Now, navigate to the restaurant menu directory.
 
-`$ cd /vagrant/project-restaurant-menu`
+`$ cd /vagrant/project-restaurant-menu/app`
 
 
-## Setting up the Database
+## Setting up the Database <a name="database" />
 From either your Vagrant virtual machine or a machine configured with the above Requirements, and while in the project directory run:
 
-`$ python database_setup.py`
+`$ python models.py`
 
 This will initialize the database and create a restaurantmenuwithusers.db file in the root folder of the repository. To populate the database with fake restaurants, menus, and a dummy user run:
 
@@ -74,10 +84,10 @@ This is optional, but highly recommended. The program is currently configured fo
 Once the database is set up, the server can be run.
 
 
-## Usage
+## Usage <a name="usage" />
 After the database has been set up, you are ready to start the server. While still in the project directory, run:
 
-`$ python flaskserver.py`
+`$ python views.py`
 
 Open your preferred browser and go to [http://localhost:5000](http://localhost:5000). This should take you to the "Menupoly" landing page.
 
@@ -87,27 +97,34 @@ Assuming you ran database_create.py in the setup, upon logging in for the first 
 
 Once signed in you will have the ability to create new restaurants, edit the name of those restaurants, delete those restaurants, and do the same for menu items on those restaurants' pages. Users who are not on the Mod account (user ID 2) will only be able to edit and delete their own content, not the content of other users.
 
-## API Usage
+## API Usage <a name="api" />
 There are three different JSON endpoints that can be obtained by GET requests. The following endpoints access the API from http://localhost:5000
 
 A list of all restaurants in the database and their IDs:
+
 `http://localhost:5000/restaurants/JSON`
 
+
 All menu items at a specific RESTAURANT_ID:
+
 `http://localhost:5000/restaurants/[RESTAURANT_ID]/JSON`
 
+
 Details of a specific menu item by ITEM_ID and RESTAURANT_ID:
+
 `http://localhost:5000/restaurants/[RESTAURANT_ID]/[ITEM_ID]/JSON`
 
 
 You can also use these API endpoints from the live demo. For example:
 
 `http://menupoly.herokuapp.com/restaurants/JSON`
+
 `http://menupoly.herokuapp.com/restaurants/4/JSON`
+
 `http://menupoly.herokuapp.com/restaurants/4/21/JSON`
 
 
-## Contributions
+## Contributions <a name="contributions" />
 This project was built as part of Udacity's Full Stack Web Developer Nanodegree. It would be in violation of the honor code for me to accept any direct contributions to the code.
 
 However, if you have any advice or suggestions on how I might improve the code, please feel free to take out an Issue on the project's [github](https://github.com/tiffanystallings/project-restaurant-menu).
