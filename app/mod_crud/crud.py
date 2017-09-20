@@ -38,7 +38,7 @@ def createRest(request, login_session):
     Returns a redirect to the main restaurants page.
     """
     # Check that user is logged in.
-    if login_session.get('user_id') != None:
+    if login_session.get('user_id') is not None:
         # Create a new restaurant in the database.
         newRest = Restaurant(name=request.form['name'],
                              user_id=login_session['user_id'])
@@ -58,7 +58,7 @@ def createRest(request, login_session):
 
 def createItem(request, login_session, restaurant_id):
     """
-    Takes request and login session objects and 
+    Takes request and login session objects and
     a restaurant id integer as inputs
     Checks for user login
     If user is not logged in, respond with an error
@@ -67,7 +67,7 @@ def createItem(request, login_session, restaurant_id):
     """
 
     # Check if user is logged in.
-    if login_session.get('user_id') != None:
+    if login_session.get('user_id') is not None:
         # If so, add the menu item.
         newItem = MenuItem(
             name=request.form['name'],
@@ -98,7 +98,7 @@ def readRest(restaurant_id=None):
     If query is passed an ID integer, it will search the
     database for a restaurant by that ID and return that object.
     """
-    if restaurant_id == None:
+    if restaurant_id is None:
         return session.query(Restaurant).all()
 
     else:
@@ -115,7 +115,7 @@ def readMenu(restaurant_id=None, menu_id=None, combined=False):
     If called with a menu ID, returns a single menu item object.
     Returns None with no inputs.
     """
-    if restaurant_id != None and combined == False:
+    if restaurant_id is not None and not combined:
         items = {
             'apps': session.query(MenuItem).filter_by(
                 restaurant_id=restaurant_id, course='Appetizer').all(),
@@ -132,11 +132,11 @@ def readMenu(restaurant_id=None, menu_id=None, combined=False):
 
         return items
 
-    if restaurant_id != None and combined == True:
+    if restaurant_id is not None and combined:
         return session.query(MenuItem).filter_by(
             restaurant_id=restaurant_id).all()
 
-    if menu_id != None:
+    if menu_id is not None:
         return session.query(MenuItem).filter_by(id=menu_id).one()
 
     else:
@@ -151,8 +151,8 @@ def updateRest(request, login_session, restaurant):
     Outputs a redirect on success, or an error on failure.
     """
 
-    if (restaurant.user_id == login_session['user_id'] or 
-        login_session['user_id'] == 2):
+    if (restaurant.user_id == login_session['user_id'] or
+            login_session['user_id'] == 2):
         # Change the restaurant's name according to the form submission
         restaurant.name = request.form['name']
 
@@ -168,8 +168,8 @@ def updateRest(request, login_session, restaurant):
 
 
 def updateItem(request, login_session, item):
-    if (item.user_id == login_session['user_id'] or 
-        login_session['user_id'] == 2):
+    if (item.user_id == login_session['user_id'] or
+            login_session['user_id'] == 2):
 
         # Update selected menu item based on form inputs
         item.name = request.form['name']
@@ -192,8 +192,8 @@ def updateItem(request, login_session, item):
 
 # Delete functions
 def deleteRest(login_session, restaurant):
-    if (restaurant.user_id == login_session['user_id'] or 
-        login_session['user_id'] == 2):
+    if (restaurant.user_id == login_session['user_id'] or
+            login_session['user_id'] == 2):
         # SQLite doesn't auto-increment by default.
         # Working around this by deleting all menu items
         # assigned to a restaurant when
@@ -217,8 +217,8 @@ def deleteRest(login_session, restaurant):
 
 
 def deleteItem(login_session, item):
-    if (item.user_id == login_session['user_id'] or 
-        login_session['user_id'] == 2):
+    if (item.user_id == login_session['user_id'] or
+            login_session['user_id'] == 2):
         # Delete restaurant from the database
         session.delete(item)
         session.commit()

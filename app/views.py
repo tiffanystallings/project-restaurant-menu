@@ -31,7 +31,7 @@ app = Flask(__name__)
 # Inject user info into all templates.
 @app.context_processor
 def injectUser():
-    return dict(user = login_session.get('username'),
+    return dict(user=login_session.get('username'),
                 user_id=login_session.get('user_id'),
                 provider=login_session.get('provider'))
 
@@ -78,7 +78,7 @@ def newRestaurant():
 
     if request.method == 'POST':
         return createRest(request, login_session)
-        
+
     return render_template('new_restaurant.html', STATE=state)
 
 
