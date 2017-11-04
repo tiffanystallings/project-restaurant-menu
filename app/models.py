@@ -18,12 +18,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from views import app as app
 
 
 # Store declarative_base for easy referencing
+app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurantmenuwithusers.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
