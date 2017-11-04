@@ -14,25 +14,27 @@ content as they see fit.
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
 from flask import flash
 from flask import redirect
 from flask import url_for
 from flask import make_response
 
-from models import Base
+from models import db
 from models import Restaurant
 from models import MenuItem
 
 import json
 
 
-# Prep the SQL server
-engine = create_engine('sqlite:///restaurantmenuwithusers.db')
-Base.metadata.bind = engine
 
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
-
+# Store declarative_base for easy referencing
+# app = Flask(__name__)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurantmenuwithusers.db'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db = SQLAlchemy(app)
 
 # Create functions
 def createRest(request, login_session):
@@ -49,8 +51,8 @@ def createRest(request, login_session):
         newRest = Restaurant(name=request.form['name'],
                              user_id=login_session['user_id'])
 
-        session.add(newRest)
-        session.commit()
+        db.session.add(newRest)
+        db.session.commit()
 
         flash('Restaurant created successfully!')
 
@@ -85,8 +87,8 @@ def createItem(request, login_session, restaurant):
             restaurant_id=restaurant.id,
             user_id=login_session['user_id'])
 
-        session.add(newItem)
-        session.commit()
+        db.session.add(newItem)
+        db.session.commit()
         flash('New menu item created!')
 
         # Redirect user to the menu page
@@ -107,10 +109,10 @@ def readRest(restaurant_id=None):
     database for a restaurant by that ID and return that object.
     """
     if restaurant_id is None:
-        return session.query(Restaurant).all()
+        return db.session.query(Restaurant).all()
 
     else:
-        return session.query(Restaurant).filter_by(id=restaurant_id).one()
+        return db.session.query(Restaurant).filter_by(id=restaurant_id).one()
 
 
 def readMenu(restaurant_id=None, menu_id=None, combined=False):
@@ -141,11 +143,11 @@ def readMenu(restaurant_id=None, menu_id=None, combined=False):
         return items
 
     if restaurant_id is not None and combined:
-        return session.query(MenuItem).filter_by(
+        return db.session.query(MenuItem).filter_by(
             restaurant_id=restaurant_id).all()
 
     if menu_id is not None:
-        return session.query(MenuItem).filter_by(id=menu_id).one()
+        return db.session.query(MenuItem).filter_by(id=menu_id).one()
 
     else:
         return None
@@ -164,8 +166,8 @@ def updateRest(request, login_session, restaurant):
         # Change the restaurant's name according to the form submission
         restaurant.name = request.form['name']
 
-        session.add(restaurant)
-        session.commit()
+        db.session.add(restaurant)
+        db.session.commit()
         flash('Restaurant edited successfully!')
 
         # Redirect user to landing page.
@@ -185,8 +187,8 @@ def updateItem(request, login_session, item):
         item.price = request.form['price']
         item.description = request.form['description']
 
-        session.add(item)
-        session.commit()
+        db.session.add(item)
+        db.session.commit()
         flash('Menu item edited successfully!')
 
         # Redirect user to menu page
@@ -208,12 +210,12 @@ def deleteRest(login_session, restaurant):
         # restaurant is deleted.
         items = readMenu(restaurant_id=restaurant.id, combined=True)
         for item in items:
-            session.delete(item)
-            session.commit()
+            db.session.delete(item)
+            db.session.commit()
 
         # Delete restaurant from the database
-        session.delete(restaurant)
-        session.commit()
+        db.session.delete(restaurant)
+        db.session.commit()
         flash('Restaurant deleted successfully!')
 
         # Redirect user to landing page
@@ -228,8 +230,8 @@ def deleteItem(login_session, item):
     if (item.user_id == login_session['user_id'] or
             login_session['user_id'] == 2):
         # Delete restaurant from the database
-        session.delete(item)
-        session.commit()
+        db.session.delete(item)
+        db.session.commit()
         flash('Menu item deleted successfully!')
 
         # Redirect user to landing page
