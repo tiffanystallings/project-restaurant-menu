@@ -18,25 +18,29 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
+from flask_sqlalchemy import SQLAlchemy
+from views import app as app
+
 
 # Store declarative_base for easy referencing
-Base = declarative_base()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurantmenuwithusers.db'
+db = SQLAlchemy(app)
 
 
-class User(Base):
+class User(db.Model):
     """
     Extends Base
     Establishes the user table
     Stores user's name, id, email, and picture.
     """
     __tablename__ = 'user'
-    name = Column(String(80), nullable=False)
-    id = Column(Integer, primary_key=True)
-    email = Column(String(250))
-    picture = Column(String(250))
+    name = db.Column(db.String(80), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(250))
+    picture = db.Column(db.String(250))
 
 
-class Restaurant(Base):
+class Restaurant(db.Model):
     """
     Extends Base
     Establishes restaurant table
@@ -44,10 +48,10 @@ class Restaurant(Base):
     created the restaurant.
     """
     __tablename__ = 'restaurant'
-    name = Column(String(80), nullable=False)
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    name = db.Column(db.String(80), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship(User)
 
     # Serialize table for JSON API endpoint
     @property
@@ -62,7 +66,7 @@ class Restaurant(Base):
         }
 
 
-class MenuItem(Base):
+class MenuItem(db.Model):
     """
     Extends Base
     Establishes menu_item table
@@ -71,15 +75,15 @@ class MenuItem(Base):
     who created it.
     """
     __tablename__ = 'menu_item'
-    name = Column(String(80), nullable=False)
-    id = Column(Integer, primary_key=True)
-    course = Column(String(250))
-    description = Column(String(250))
-    price = Column(String(8))
-    restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
-    restaurant = relationship(Restaurant)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    name = db.Column(db.String(80), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    course = db.Column(db.String(250))
+    description = db.Column(db.String(250))
+    price = db.Column(db.String(8))
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
+    restaurant = db.relationship(Restaurant)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship(User)
 
     # Serialize table for JSON API endpoint
     @property
@@ -97,6 +101,3 @@ class MenuItem(Base):
             'restaurant_id': self.restaurant_id
         }
 
-# Initialize database and tables
-engine = create_engine('sqlite:///restaurantmenuwithusers.db')
-Base.metadata.create_all(engine)
